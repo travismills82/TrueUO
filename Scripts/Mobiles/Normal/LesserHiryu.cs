@@ -37,7 +37,7 @@ namespace Server.Mobiles
             Karma = -10000;
 
             Tamable = true;
-            ControlSlots = 3;
+            ControlSlots = 1;
             MinTameSkill = 98.7;
 
             SetWeaponAbility(WeaponAbility.Dismount);
