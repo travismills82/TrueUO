@@ -1354,7 +1354,7 @@ namespace Server.Mobiles
         public UnboundEnergyVortex() : base(AIType.AI_Melee, FightMode.Weakest, 10, 1, 0.4, 0.2)
         {
             Name = "an unbound energy vortex";
-            Body = 0xDC;
+            Body = 164;
             Hue = 0x76;
 
             SetStr(450);
