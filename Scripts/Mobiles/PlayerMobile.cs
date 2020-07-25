@@ -1258,18 +1258,22 @@ namespace Server.Mobiles
                 return;
             }
 
-            if (from is PlayerMobile)
-            {
-                ((PlayerMobile)from).ClaimAutoStabledPets();
-                ((PlayerMobile)from).ValidateEquipment();
+            var pm = from as PlayerMobile;
 
-                ReportMurdererGump.CheckMurderer(from);
+            if (pm != null)
+            {
+                pm.ClaimAutoStabledPets();
+                pm.ValidateEquipment();
+
+                ReportMurdererGump.CheckMurderer(pm);
             }
-            else if (Siege.SiegeShard && from.Map == Map.Trammel && from.AccessLevel == AccessLevel.Player)
+
+            if (Siege.SiegeShard && from.Map == Map.Trammel && from.AccessLevel == AccessLevel.Player)
             {
                 from.Map = Map.Felucca;
             }
 
+            //TODO: Move to fellowship data event sink
             if (((from.Map == Map.Trammel && from.Region.IsPartOf("Blackthorn Castle")) || PointsSystem.FellowshipData.Enabled && from.Region.IsPartOf("BlackthornDungeon") || from.Region.IsPartOf("Ver Lor Reg")) && from.Player && from.AccessLevel == AccessLevel.Player && from.CharacterOut)
             {
                 StormLevelGump menu = new StormLevelGump(from);
@@ -1342,30 +1346,31 @@ namespace Server.Mobiles
                     }
 
                     Item item = items[i];
+                    bool drop = false;
 
-                    bool morph = from.FindItemOnLayer(Layer.Earrings) is MorphEarrings;
+                    if (!RaceDefinitions.ValidateEquipment(from, item, false))
+                    {
+                        drop = true;
+                    }
 
                     if (item is BaseWeapon)
                     {
                         BaseWeapon weapon = (BaseWeapon)item;
 
-                        bool drop = false;
-
-                        if (dex < weapon.DexRequirement)
+                        if (!drop)
                         {
-                            drop = true;
-                        }
-                        else if (str < AOS.Scale(weapon.StrRequirement, 100 - weapon.GetLowerStatReq()))
-                        {
-                            drop = true;
-                        }
-                        else if (intel < weapon.IntRequirement)
-                        {
-                            drop = true;
-                        }
-                        else if (weapon.RequiredRace != null && weapon.RequiredRace != Race && !morph)
-                        {
-                            drop = true;
+                            if (dex < weapon.DexRequirement)
+                            {
+                                drop = true;
+                            }
+                            else if (str < AOS.Scale(weapon.StrRequirement, 100 - weapon.GetLowerStatReq()))
+                            {
+                                drop = true;
+                            }
+                            else if (intel < weapon.IntRequirement)
+                            {
+                                drop = true;
+                            }
                         }
 
                         if (drop)
@@ -1386,37 +1391,34 @@ namespace Server.Mobiles
                     {
                         BaseArmor armor = (BaseArmor)item;
 
-                        bool drop = false;
-
-                        if (!armor.AllowMaleWearer && !from.Female && from.AccessLevel < AccessLevel.GameMaster)
+                        if (!drop)
                         {
-                            drop = true;
-                        }
-                        else if (!armor.AllowFemaleWearer && from.Female && from.AccessLevel < AccessLevel.GameMaster)
-                        {
-                            drop = true;
-                        }
-                        else if (armor.RequiredRace != null && armor.RequiredRace != Race && !morph)
-                        {
-                            drop = true;
-                        }
-                        else
-                        {
-                            int strBonus = armor.ComputeStatBonus(StatType.Str), strReq = armor.ComputeStatReq(StatType.Str);
-                            int dexBonus = armor.ComputeStatBonus(StatType.Dex), dexReq = armor.ComputeStatReq(StatType.Dex);
-                            int intBonus = armor.ComputeStatBonus(StatType.Int), intReq = armor.ComputeStatReq(StatType.Int);
-
-                            if (dex < dexReq || (dex + dexBonus) < 1)
+                            if (!armor.AllowMaleWearer && !from.Female && from.AccessLevel < AccessLevel.GameMaster)
                             {
                                 drop = true;
                             }
-                            else if (str < strReq || (str + strBonus) < 1)
+                            else if (!armor.AllowFemaleWearer && from.Female && from.AccessLevel < AccessLevel.GameMaster)
                             {
                                 drop = true;
                             }
-                            else if (intel < intReq || (intel + intBonus) < 1)
+                            else
                             {
-                                drop = true;
+                                int strBonus = armor.ComputeStatBonus(StatType.Str), strReq = armor.ComputeStatReq(StatType.Str);
+                                int dexBonus = armor.ComputeStatBonus(StatType.Dex), dexReq = armor.ComputeStatReq(StatType.Dex);
+                                int intBonus = armor.ComputeStatBonus(StatType.Int), intReq = armor.ComputeStatReq(StatType.Int);
+
+                                if (dex < dexReq || (dex + dexBonus) < 1)
+                                {
+                                    drop = true;
+                                }
+                                else if (str < strReq || (str + strBonus) < 1)
+                                {
+                                    drop = true;
+                                }
+                                else if (intel < intReq || (intel + intBonus) < 1)
+                                {
+                                    drop = true;
+                                }
                             }
                         }
 
@@ -1446,28 +1448,25 @@ namespace Server.Mobiles
                     {
                         BaseClothing clothing = (BaseClothing)item;
 
-                        bool drop = false;
-
-                        if (!clothing.AllowMaleWearer && !from.Female && from.AccessLevel < AccessLevel.GameMaster)
+                        if (!drop)
                         {
-                            drop = true;
-                        }
-                        else if (!clothing.AllowFemaleWearer && from.Female && from.AccessLevel < AccessLevel.GameMaster)
-                        {
-                            drop = true;
-                        }
-                        else if (clothing.RequiredRace != null && clothing.RequiredRace != Race && !morph)
-                        {
-                            drop = true;
-                        }
-                        else
-                        {
-                            int strBonus = clothing.ComputeStatBonus(StatType.Str);
-                            int strReq = clothing.ComputeStatReq(StatType.Str);
-
-                            if (str < strReq || (str + strBonus) < 1)
+                            if (!clothing.AllowMaleWearer && !from.Female && from.AccessLevel < AccessLevel.GameMaster)
                             {
                                 drop = true;
+                            }
+                            else if (!clothing.AllowFemaleWearer && from.Female && from.AccessLevel < AccessLevel.GameMaster)
+                            {
+                                drop = true;
+                            }
+                            else
+                            {
+                                int strBonus = clothing.ComputeStatBonus(StatType.Str);
+                                int strReq = clothing.ComputeStatReq(StatType.Str);
+
+                                if (str < strReq || (str + strBonus) < 1)
+                                {
+                                    drop = true;
+                                }
                             }
                         }
 
@@ -1486,15 +1485,12 @@ namespace Server.Mobiles
                             moved = true;
                         }
                     }
-                    else if (item is BaseQuiver)
+                    else if (item is BaseQuiver && drop)
                     {
-                        if (Race == Race.Gargoyle)
-                        {
-                            from.AddToBackpack(item);
+                        from.AddToBackpack(item);
 
-                            from.SendLocalizedMessage(1062002, "quiver"); // You can no longer wear your ~1_ARMOR~
-                            moved = true;
-                        }
+                        from.SendLocalizedMessage(1062002, "quiver"); // You can no longer wear your ~1_ARMOR~
+                        moved = true;
                     }
 
                     #region Vice Vs Virtue
