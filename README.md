@@ -29,4 +29,6 @@ GPL v2
 ----
 server address:	ultimaonline.duckdns.org port 2593
 
-unencrypted client support
+Patch Client Encryption checked, Use OSI Encryption unchecked.
+
+![alt text](https://github.com/travismills82/TrueUO/blob/master/razor.png)
