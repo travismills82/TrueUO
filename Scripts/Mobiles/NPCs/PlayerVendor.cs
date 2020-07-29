@@ -564,6 +564,8 @@ namespace Server.Mobiles
                             {
                                 Banker.Deposit(House.MovingCrate, HoldGold);
                             }
+                            
+                            HoldGold = 0;
                         }
 
                         foreach (Item item in list)
@@ -575,6 +577,7 @@ namespace Server.Mobiles
                     {
                         VendorInventory inventory = new VendorInventory(House, Owner, Name, ShopName);
                         inventory.Gold = HoldGold;
+                        HoldGold = 0;
 
                         foreach (Item item in list)
                         {
@@ -598,6 +601,8 @@ namespace Server.Mobiles
                         {
                             Banker.Deposit(backpack, HoldGold);
                         }
+                        
+                        HoldGold = 0;
                     }
 
                     foreach (Item item in list)
@@ -621,6 +626,11 @@ namespace Server.Mobiles
             if (Placeholder != null)
             {
                 Placeholder.Delete();
+            }
+            
+            if(PlayerVendors.Contains(this))
+            {
+                PlayerVendors.Remove(this);
             }
         }
 
@@ -1602,7 +1612,7 @@ namespace Server.Mobiles
 
         protected override void OnTick()
         {
-            var list = PlayerVendor.PlayerVendors.Where(v => !v.IsCommission && v.NextPayTime <= DateTime.UtcNow).ToList();
+            var list = PlayerVendor.PlayerVendors.Where(v => !v.Deleted && !v.IsCommission && v.NextPayTime <= DateTime.UtcNow).ToList();
 
             for (int i = 0; i < list.Count; i++)
             {
@@ -1627,12 +1637,11 @@ namespace Server.Mobiles
 
             ColUtility.Free(list);
 
-            var rentals = PlayerVendor.PlayerVendors.OfType<RentedVendor>().Where(rv => rv.RentalExpireTime <= DateTime.UtcNow).ToList();
+            var rentals = PlayerVendor.PlayerVendors.OfType<RentedVendor>().Where(rv => !rv.Deleted && rv.RentalExpireTime <= DateTime.UtcNow).ToList();
 
             for (int i = 0; i < rentals.Count; i++)
             {
                 var vendor = rentals[i];
-
                 int renewalPrice = vendor.RenewalPrice;
 
                 if (vendor.Renew && vendor.HoldGold >= renewalPrice)
