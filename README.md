@@ -32,3 +32,5 @@ server address:	ultimaonline.duckdns.org port 2593
 Patch Client Encryption checked, Use OSI Encryption unchecked.
 
 ![alt text](https://github.com/travismills82/TrueUO/blob/master/razor.png)
+
+Install .net SDK to compile TrueUO https://dotnet.microsoft.com/download/dotnet/thank-you/sdk-5.0.100-preview.8-windows-x64-installer
