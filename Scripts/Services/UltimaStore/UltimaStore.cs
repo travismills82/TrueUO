@@ -79,6 +79,7 @@ namespace Server.Engines.UOStore
         {
             // Featured
             StoreCategory cat = StoreCategory.Featured;
+            Register<AnvilofArtifactsDeed>(1159437, 1159466, 0xA108, 0, 0, 1000, cat);
             Register<VirtueShield>(1109616, 1158384, 0x7818, 0, 0, 1500, cat);
             Register<SoulstoneToken>(1158404, 1158405, 0x2A93, 0, 2598, 1000, cat, ConstructSoulstone);
             //Register<DeluxeStarterPackToken>(1158368, 1158369, 0, 0x9CCB, 0, 2000, cat);
@@ -660,11 +661,11 @@ namespace Server.Engines.UOStore
             {
                 if (td.Number > 0 && VendorSearch.StringList != null)
                 {
-                    str += String.Format("{0} ", VendorSearch.StringList.GetString(td.Number));
+                    str += string.Format("{0} ", VendorSearch.StringList.GetString(td.Number));
                 }
-                else if (!String.IsNullOrWhiteSpace(td.String))
+                else if (!string.IsNullOrWhiteSpace(td.String))
                 {
-                    str += String.Format("{0} ", td.String);
+                    str += string.Format("{0} ", td.String);
                 }
             }
 
@@ -680,7 +681,7 @@ namespace Server.Engines.UOStore
                 str = VendorSearch.StringList.GetString(text.Number);
             }
 
-            return str ?? String.Empty;
+            return str ?? string.Empty;
         }
 
         public static List<StoreEntry> GetList(StoreCategory cat, StoreEntry forcedEntry = null)
@@ -698,7 +699,7 @@ namespace Server.Engines.UOStore
             switch (sort)
             {
                 case SortBy.Name:
-                    list.Sort((a, b) => String.CompareOrdinal(GetStringName(a.Name), GetStringName(b.Name)));
+                    list.Sort((a, b) => string.CompareOrdinal(GetStringName(a.Name), GetStringName(b.Name)));
                     break;
                 case SortBy.PriceLower:
                     list.Sort((a, b) => a.Price.CompareTo(b.Price));
@@ -763,7 +764,7 @@ namespace Server.Engines.UOStore
 
                         if (sys != null)
                         {
-                            return (int)Math.Min(Int32.MaxValue, sys.GetPoints(m));
+                            return (int)Math.Min(int.MaxValue, sys.GetPoints(m));
                         }
                     }
                     break;

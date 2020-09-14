@@ -35,6 +35,7 @@ using Server.Spells.Seventh;
 using Server.Spells.Sixth;
 using Server.Spells.SkillMasteries;
 using Server.Targeting;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -590,16 +591,16 @@ namespace Server.Mobiles
 
                             if (name != null && ammo.Amount > 1)
                             {
-                                name = String.Format("{0}s", name);
+                                name = string.Format("{0}s", name);
                             }
 
                             if (name == null)
                             {
-                                name = String.Format("#{0}", ammo.LabelNumber);
+                                name = string.Format("#{0}", ammo.LabelNumber);
                             }
 
                             PlaceInBackpack(ammo);
-                            SendLocalizedMessage(1073504, String.Format("{0}\t{1}", ammo.Amount, name)); // You recover ~1_NUM~ ~2_AMMO~.
+                            SendLocalizedMessage(1073504, string.Format("{0}\t{1}", ammo.Amount, name)); // You recover ~1_NUM~ ~2_AMMO~.
                         }
                     }
                 }
@@ -647,7 +648,7 @@ namespace Server.Mobiles
                 string name;
 
                 if (Fame >= 10000)
-                    name = String.Format("{0} {1}", Female ? "Lady" : "Lord", RawName);
+                    name = string.Format("{0} {1}", Female ? "Lady" : "Lord", RawName);
                 else
                     name = RawName;
 
@@ -1008,12 +1009,16 @@ namespace Server.Mobiles
             if (type != ResistanceType.Physical && 60 < max && CurseSpell.UnderEffect(this))
             {
                 max -= 10;
-                //max = 60;
             }
 
             if ((type == ResistanceType.Fire || type == ResistanceType.Poison) && CorpseSkinSpell.IsUnderEffects(this))
             {
                 max = CorpseSkinSpell.GetResistMalus(this);
+            }
+
+            if (type == ResistanceType.Physical && MagicReflectSpell.HasReflect(this))
+            {
+                max -= 5;
             }
 
             return max;
@@ -1271,14 +1276,6 @@ namespace Server.Mobiles
                 from.Map = Map.Felucca;
             }
 
-            //TODO: Move to fellowship data event sink
-            if (((from.Map == Map.Trammel && from.Region.IsPartOf("Blackthorn Castle")) || PointsSystem.FellowshipData.Enabled && from.Region.IsPartOf("BlackthornDungeon") || from.Region.IsPartOf("Ver Lor Reg")) && from.Player && from.AccessLevel == AccessLevel.Player && from.CharacterOut)
-            {
-                StormLevelGump menu = new StormLevelGump(from);
-                menu.BeginClose();
-                from.SendGump(menu);
-            }
-
             if (from.NetState != null && from.NetState.IsEnhancedClient && from.Mount is EtherealMount)
             {
                 Timer.DelayCall(TimeSpan.FromSeconds(1), mount =>
@@ -1377,7 +1374,7 @@ namespace Server.Mobiles
 
                             if (name == null)
                             {
-                                name = String.Format("#{0}", weapon.LabelNumber);
+                                name = string.Format("#{0}", weapon.LabelNumber);
                             }
 
                             from.SendLocalizedMessage(1062001, name); // You can no longer wield your ~1_WEAPON~
@@ -1426,7 +1423,7 @@ namespace Server.Mobiles
 
                             if (name == null)
                             {
-                                name = String.Format("#{0}", armor.LabelNumber);
+                                name = string.Format("#{0}", armor.LabelNumber);
                             }
 
                             if (armor is BaseShield)
@@ -1474,7 +1471,7 @@ namespace Server.Mobiles
 
                             if (name == null)
                             {
-                                name = String.Format("#{0}", clothing.LabelNumber);
+                                name = string.Format("#{0}", clothing.LabelNumber);
                             }
 
                             from.SendLocalizedMessage(1062002, name); // You can no longer wear your ~1_ARMOR~
@@ -1500,6 +1497,11 @@ namespace Server.Mobiles
                         moved = true;
                     }
                     #endregion
+                }
+
+                if (from.Mount is VvVMount && !ViceVsVirtueSystem.IsVvV(from))
+                {
+                    from.Mount.Rider = null;
                 }
 
                 if (moved)
@@ -1686,7 +1688,7 @@ namespace Server.Mobiles
 
                 if (curWeight > MaxWeight)
                 {
-                    SendLocalizedMessage(1019035, true, String.Format(" : {0} / {1}", curWeight, MaxWeight));
+                    SendLocalizedMessage(1019035, true, string.Format(" : {0} / {1}", curWeight, MaxWeight));
                 }
             }
         }
@@ -2067,7 +2069,7 @@ namespace Server.Mobiles
             {
                 if (Hits <= HitsMax / 2)
                 {
-                    BuffInfo.AddBuff(this, new BuffInfo(BuffIcon.Berserk, 1080449, 1115021, String.Format("{0}\t{1}", GetRacialBerserkBuff(false), GetRacialBerserkBuff(true)), false));
+                    BuffInfo.AddBuff(this, new BuffInfo(BuffIcon.Berserk, 1080449, 1115021, string.Format("{0}\t{1}", GetRacialBerserkBuff(false), GetRacialBerserkBuff(true)), false));
                     Delta(MobileDelta.WeaponDamage);
                 }
                 else if (oldValue < Hits && Hits > HitsMax / 2)
@@ -2387,7 +2389,7 @@ namespace Server.Mobiles
             {
                 Mobile prot = m_JusticeProtectors[i];
 
-                string args = String.Format("{0}\t{1}", Name, prot.Name);
+                string args = string.Format("{0}\t{1}", Name, prot.Name);
 
                 prot.SendLocalizedMessage(1049371, args);
                 // The protective relationship between ~1_PLAYER1~ and ~2_PLAYER2~ has been ended.
@@ -4095,7 +4097,7 @@ namespace Server.Mobiles
 
         private static void SendToStaffMessage(Mobile from, string format, params object[] args)
         {
-            SendToStaffMessage(from, String.Format(format, args));
+            SendToStaffMessage(from, string.Format(format, args));
         }
 
         #region Poison
@@ -4638,15 +4640,6 @@ namespace Server.Mobiles
             }
 
             #region Mondain's Legacy
-            /*if (m_Quests == null)
-			{
-				m_Quests = new List<BaseQuest>();
-			}
-
-			if (m_Chains == null)
-			{
-				m_Chains = new Dictionary<QuestChain, BaseChain>();
-			}*/
 
             if (m_DoneQuests == null)
             {
@@ -5051,7 +5044,7 @@ namespace Server.Mobiles
         {
             base.GetProperties(list);
 
-            JollyRogerData.DisplayTitle(this, list);
+            Engines.JollyRoger.JollyRogerData.DisplayTitle(this, list);
 
             if (m_SubtitleSkillTitle != null)
                 list.Add(1042971, m_SubtitleSkillTitle);
@@ -5096,7 +5089,7 @@ namespace Server.Mobiles
             {
                 VvVPlayerEntry entry = PointsSystem.ViceVsVirtue.GetPlayerEntry<VvVPlayerEntry>(this);
 
-                list.Add(String.Format("Kills: {0} / Deaths: {1} / Assists: {2}", // no cliloc for this!
+                list.Add(string.Format("Kills: {0} / Deaths: {1} / Assists: {2}", // no cliloc for this!
                     entry == null ? "0" : entry.Kills.ToString(), entry == null ? "0" : entry.Deaths.ToString(), entry == null ? "0" : entry.Assists.ToString()));
 
                 list.Add(1060415, AosAttributes.GetValue(this, AosAttribute.AttackChance).ToString()); // hit chance increase ~1_val~%
@@ -5194,7 +5187,6 @@ namespace Server.Mobiles
 
         #region Mondain's Legacy
         public List<BaseQuest> Quests => MondainQuestData.GetQuests(this);
-
         public Dictionary<QuestChain, BaseChain> Chains => MondainQuestData.GetChains(this);
 
         [CommandProperty(AccessLevel.GameMaster)]
@@ -5424,11 +5416,11 @@ namespace Server.Mobiles
                     }
                     else if (suffix.Length > 0)
                     {
-                        suffix = String.Format("{0} {1}", suffix, m_OverheadTitle);
+                        suffix = string.Format("{0} {1}", suffix, m_OverheadTitle);
                     }
                     else
                     {
-                        suffix = String.Format("{0}", m_OverheadTitle);
+                        suffix = string.Format("{0}", m_OverheadTitle);
                     }
                 }
             }
@@ -5436,15 +5428,15 @@ namespace Server.Mobiles
             {
                 if (vvv)
                 {
-                    suffix = String.Format("[{0}] [VvV]", Utility.FixHtml(guild.Abbreviation));
+                    suffix = string.Format("[{0}] [VvV]", Utility.FixHtml(guild.Abbreviation));
                 }
                 else if (suffix.Length > 0)
                 {
-                    suffix = String.Format("{0} [{1}]", suffix, Utility.FixHtml(guild.Abbreviation));
+                    suffix = string.Format("{0} [{1}]", suffix, Utility.FixHtml(guild.Abbreviation));
                 }
                 else
                 {
-                    suffix = String.Format("[{0}]", Utility.FixHtml(guild.Abbreviation));
+                    suffix = string.Format("[{0}]", Utility.FixHtml(guild.Abbreviation));
                 }
             }
             else if (vvv)
@@ -5756,7 +5748,7 @@ namespace Server.Mobiles
                 }
                 else
                 {
-                    suffix = String.Concat(suffix, " (Young)");
+                    suffix = string.Concat(suffix, " (Young)");
                 }
             }
 

@@ -152,7 +152,7 @@ namespace Server.Engines.NewMagincia
 
                 SendToStables(from, pet);
 
-                from.SendLocalizedMessage(1150380, String.Format("{0}\t{1}", entry.TypeName, pet.Name)); // You have purchased ~1_TYPE~ named "~2_NAME~". The animal is now in the stables and you may retrieve it there.
+                from.SendLocalizedMessage(1150380, string.Format("{0}\t{1}", entry.TypeName, pet.Name)); // You have purchased ~1_TYPE~ named "~2_NAME~". The animal is now in the stables and you may retrieve it there.
                 m_BrokerEntries.Remove(entry);
                 return 0;
             }
@@ -227,7 +227,6 @@ namespace Server.Engines.NewMagincia
             public InternalTimer(BaseCreature bc) : base(TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(2))
             {
                 m_Creature = bc;
-                Priority = TimerPriority.OneMinute;
             }
 
             protected override void OnTick()

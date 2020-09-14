@@ -463,9 +463,10 @@ namespace Server.Items
         {
             base.Serialize(writer);
 
-            writer.Write(3); // Version
+            writer.Write(4); // Version
 
             // version 4
+            writer.Write(m_EvaluateDay);
             writer.Write(NextEvaluate);
 
             // version 0
@@ -492,8 +493,9 @@ namespace Server.Items
             switch (version)
             {
                 case 4:
+                    m_EvaluateDay = reader.ReadBool();
                     NextEvaluate = reader.ReadDateTime();
-                    goto case 1;
+                    goto case 0;
                 case 3:
                 case 2:
                 case 1:
@@ -764,7 +766,7 @@ namespace Server.Items
                 return;
             }
 
-            to.SendLocalizedMessage(1074360, String.Format("#{0}", item.LabelNumber)); // You receive a reward: ~1_REWARD~
+            to.SendLocalizedMessage(1074360, string.Format("#{0}", item.LabelNumber)); // You receive a reward: ~1_REWARD~
             to.PlaySound(0x5A3);
 
             m_RewardAvailable = false;
@@ -902,7 +904,7 @@ namespace Server.Items
             LiveCreatures += 1;
 
             if (from != null)
-                from.SendLocalizedMessage(1073632, String.Format("#{0}", fish.LabelNumber)); // You add the following creature to your aquarium: ~1_FISH~
+                from.SendLocalizedMessage(1073632, string.Format("#{0}", fish.LabelNumber)); // You add the following creature to your aquarium: ~1_FISH~
 
             InvalidateProperties();
             return true;
@@ -937,7 +939,7 @@ namespace Server.Items
             AddItem(item);
 
             if (from != null)
-                from.SendLocalizedMessage(1073635, (item.LabelNumber != 0) ? String.Format("#{0}", item.LabelNumber) : item.Name); // You add the following decoration to your aquarium: ~1_NAME~
+                from.SendLocalizedMessage(1073635, (item.LabelNumber != 0) ? string.Format("#{0}", item.LabelNumber) : item.Name); // You add the following decoration to your aquarium: ~1_NAME~
 
             InvalidateProperties();
             return true;
@@ -1677,8 +1679,6 @@ namespace Server.Items
                         from.SendLocalizedMessage(500269); // You cannot build that there.
                     else if (res == AddonFitResult.NotInHouse)
                         from.SendLocalizedMessage(500274); // You can only place this in a house that you own!
-                    else if (res == AddonFitResult.DoorsNotClosed)
-                        from.SendMessage("You must close all house doors before placing this.");
                     else if (res == AddonFitResult.DoorTooClose)
                         from.SendLocalizedMessage(500271); // You cannot build near the door.
                     else if (res == AddonFitResult.NoWall)

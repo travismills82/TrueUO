@@ -1649,7 +1649,7 @@ namespace Server.Mobiles
             timer = new ExpireTimer(defender, mods, TimeSpan.FromSeconds(5.0));
             timer.Start();
 
-            BuffInfo.AddBuff(defender, new BuffInfo(BuffIcon.RuneBeetleCorruption, 1153796, 1153823, TimeSpan.FromSeconds(5.0), defender, String.Format("{0}\t{1}\t{2}\t{3}\t{4}", phy, cold, poison, energy, fire)));
+            BuffInfo.AddBuff(defender, new BuffInfo(BuffIcon.RuneBeetleCorruption, 1153796, 1153823, TimeSpan.FromSeconds(5.0), defender, string.Format("{0}\t{1}\t{2}\t{3}\t{4}", phy, cold, poison, energy, fire)));
 
             _Table[defender] = timer;
         }
@@ -1787,7 +1787,7 @@ namespace Server.Mobiles
                 attacker.AddStatMod(new StatMod(StatType.Int, "BloodWorm_Int", -Int, TimeSpan.FromSeconds(60)));
 
                 // -~1_STR~ strength.<br>-~2_INT~ intelligence.<br>-~3_DEX~ dexterity.<br> Drains all stamina.
-                BuffInfo.AddBuff(attacker, new BuffInfo(BuffIcon.BloodwormAnemia, 1153797, 1153824, String.Format("{0}\t{1}\t{2}", str, dex, Int)));
+                BuffInfo.AddBuff(attacker, new BuffInfo(BuffIcon.BloodwormAnemia, 1153797, 1153824, string.Format("{0}\t{1}\t{2}", str, dex, Int)));
 
                 _Table.Add(attacker, timer);
             }
@@ -2178,7 +2178,8 @@ namespace Server.Mobiles
     /// This is the Succubus/Semidar type life drain. This is not a trainable pet ability
     /// </summary>
     public class LifeDrain : SpecialAbility
-    {        public override bool TriggerOnDoMeleeDamage => true;
+    {
+        public override bool TriggerOnDoMeleeDamage => true;
         public override bool TriggerOnGotMeleeDamage => true;
         public override bool NaturalAbility => true;
         public override TimeSpan CooldownDuration => TimeSpan.FromSeconds(1);

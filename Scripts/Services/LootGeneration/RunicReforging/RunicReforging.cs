@@ -1750,7 +1750,7 @@ namespace Server.Items
             }
             else
             {
-                list.Add(1151758, String.Format("{0}\t#{1}", name, GetSuffixName(suffix)));// ~1_ITEM~ of ~2_SUFFIX~
+                list.Add(1151758, string.Format("{0}\t#{1}", name, GetSuffixName(suffix)));// ~1_ITEM~ of ~2_SUFFIX~
             }
         }
 
@@ -2632,7 +2632,7 @@ namespace Server.Items
         public static bool ApplyProperty(Item item, int id, int perclow, int perchigh, ref int budget, int luckchance, bool reforged, bool powerful)
         {
             int min = ItemPropertyInfo.GetMinIntensity(item, id);
-            int naturalMax = ItemPropertyInfo.GetMaxIntensity(item, id, false);
+            int naturalMax = ItemPropertyInfo.GetMaxIntensity(item, id, false, true);
             int max = naturalMax;
             int[] overcap = null;
 
@@ -2660,8 +2660,8 @@ namespace Server.Items
                     value = naturalMax;
                 }
             }
-            Imbuing.SetProperty(item, id, value);
 
+            Imbuing.SetProperty(item, id, value);
             budget -= Imbuing.GetIntensityForID(item, id, -1, value);
 
             return true;
@@ -3287,7 +3287,7 @@ namespace Server.Items
                 }
             }
 
-            SpawnerPersistence.ToConsole(String.Format("Removed Self Repair from {0} items.", fix));
+            SpawnerPersistence.ToConsole(string.Format("Removed Self Repair from {0} items.", fix));
         }
 
         public static void ItemNerfVersion6()
@@ -3348,7 +3348,7 @@ namespace Server.Items
                 }
             }
 
-            SpawnerPersistence.ToConsole(String.Format("Cleauned up {0} items: {1} fc2, {2} non-Armor eater, {3} non armor casting focus, {4} brittle jewels converted to Antique.", fc2 + eater + focus + brittle, fc2, eater, focus, brittle));
+            SpawnerPersistence.ToConsole(string.Format("Cleauned up {0} items: {1} fc2, {2} non-Armor eater, {3} non armor casting focus, {4} brittle jewels converted to Antique.", fc2 + eater + focus + brittle, fc2, eater, focus, brittle));
         }
         #endregion
     }

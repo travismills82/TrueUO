@@ -424,8 +424,7 @@ namespace Server.Engines.Craft
 
         private static readonly Type[] m_MarkableTable =
         {
-            typeof(BlueDiamondRing), typeof(BrilliantAmberBracelet), typeof(DarkSapphireBracelet), typeof(EcruCitrineRing),
-            typeof(FireRubyBracelet), typeof(PerfectEmeraldRing), typeof(TurqouiseRing), typeof(WhitePearlBracelet),
+            typeof(BaseBracelet), typeof(BaseRing),
             typeof(BaseContainer), typeof(CraftableFurniture),
 
             typeof(BaseArmor), typeof(BaseWeapon), typeof(BaseClothing), typeof(BaseInstrument), typeof(BaseTool),
@@ -979,7 +978,7 @@ namespace Server.Engines.Craft
                     types[i] = new[] { baseType };
                 }
 
-                amounts[i] = craftRes.Amount;
+                amounts[i] = IsAnvilOfArtifactValid(from, craftSystem)  ? craftRes.Amount * 10 : craftRes.Amount;
 
                 // For stackable items that can ben crafted more than one at a time
                 if (UseAllRes)
@@ -999,7 +998,7 @@ namespace Server.Engines.Craft
                             {
                                 message = res.MessageNumber;
                             }
-                            else if (!String.IsNullOrEmpty(res.MessageString))
+                            else if (!string.IsNullOrEmpty(res.MessageString))
                             {
                                 message = res.MessageString;
                             }
@@ -1182,7 +1181,7 @@ namespace Server.Engines.Craft
                 {
                     message = res.MessageNumber;
                 }
-                else if (res.MessageString != null && res.MessageString != String.Empty)
+                else if (res.MessageString != null && res.MessageString != string.Empty)
                 {
                     message = res.MessageString;
                 }
@@ -1236,7 +1235,7 @@ namespace Server.Engines.Craft
                 m_ResAmount = amount;
             }
 
-            if (CaddelliteCraft && (!item.HasSocket<Caddellite>() || !Server.Engines.Points.PointsSystem.Khaldun.InSeason))
+            if (CaddelliteCraft && (!item.HasSocket<Caddellite>() || !Server.Engines.Khaldun.TreasuresOfKhaldunEvent.Instance.Running))
             {
                 CaddelliteCraft = false;
             }
@@ -1256,6 +1255,19 @@ namespace Server.Engines.Craft
             }
 
             return true;
+        }
+
+        public bool IsAnvilOfArtifactValid(Mobile from, CraftSystem system)
+        {
+            if (CraftContext.IsAnvilReady(from) && ItemType.IsSubclassOf(typeof(BaseArmor)) && !ItemType.IsSubclassOf(typeof(BaseShield)))
+            {
+                bool allRequiredSkills = true;
+                double chance = GetSuccessChance(from, null, system, false, ref allRequiredSkills);
+
+                return GetExceptionalChance(system, chance, from) > 0.0;
+            }
+
+            return false;
         }
 
         public double GetExceptionalChance(CraftSystem system, double chance, Mobile from)
@@ -1567,7 +1579,7 @@ namespace Server.Engines.Craft
                 case Expansion.TOL:
                     return 1155875; // You must have the Time of Legends expansion to use this feature.
                 default:
-                    return String.Format("The \"{0}\" expansion is required to attempt this item.", ExpansionInfo.GetInfo(expansion).Name);
+                    return string.Format("The \"{0}\" expansion is required to attempt this item.", ExpansionInfo.GetInfo(expansion).Name);
             }
         }
 
