@@ -3,7 +3,6 @@ using Server.Engines.Harvest;
 using Server.Engines.Khaldun;
 using Server.Mobiles;
 using Server.Spells;
-using System;
 
 namespace Server.Items
 {
@@ -73,7 +72,7 @@ namespace Server.Items
 
         public static bool IsCaddellite(Mobile from, Item item)
         {
-            return Server.Engines.Khaldun.TreasuresOfKhaldunEvent.Instance.Running && item is ICaddelliteTool && SpellHelper.IsAnyT2A(from.Map, from.Location);
+            return TreasuresOfKhaldunEvent.Instance.Running && item is ICaddelliteTool && SpellHelper.IsAnyT2A(from.Map, from.Location);
         }
 
         public static void OnHarvest(Mobile from, Item tool, HarvestSystem system, Item resource)

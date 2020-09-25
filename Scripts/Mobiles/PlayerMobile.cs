@@ -18,7 +18,6 @@ using Server.Guilds;
 using Server.Gumps;
 using Server.Items;
 using Server.Misc;
-using Server.Movement;
 using Server.Multis;
 using Server.Network;
 using Server.Regions;
@@ -413,9 +412,6 @@ namespace Server.Mobiles
         public DateTime LastOnline { get { return m_LastOnline; } set { m_LastOnline = value; } }
 
         [CommandProperty(AccessLevel.GameMaster)]
-        public long LastMoved => LastMoveTime;
-
-        [CommandProperty(AccessLevel.GameMaster)]
         public TimeSpan NpcGuildGameTime { get { return m_NpcGuildGameTime; } set { m_NpcGuildGameTime = value; } }
 
         public int ExecutesLightningStrike { get { return m_ExecutesLightningStrike; } set { m_ExecutesLightningStrike = value; } }
@@ -569,7 +565,7 @@ namespace Server.Mobiles
                         }
                         catch (Exception e)
                         {
-                            Server.Diagnostics.ExceptionLogging.LogException(e);
+                            Diagnostics.ExceptionLogging.LogException(e);
                         }
 
                         if (ammo != null)
@@ -887,9 +883,9 @@ namespace Server.Mobiles
         {
             PlayerMobile pm = e.Mobile as PlayerMobile;
 
-            if (pm.IsStaff() || Core.TickCount - pm.NextActionTime >= 0)
+            if (pm != null && pm.Backpack != null && pm.Alive && e.List != null && e.List.Count > 0)
             {
-                if (pm != null && pm.Backpack != null && pm.Alive && e.List != null && e.List.Count > 0)
+                if (pm.IsStaff() || Core.TickCount - pm.NextActionTime >= 0)
                 {
                     Container pack = pm.Backpack;
 
@@ -921,22 +917,22 @@ namespace Server.Mobiles
                         }
                     });
 
-                    pm.NextActionTime = Core.TickCount + (Mobile.ActionDelay * e.List.Count);
+                    pm.NextActionTime = Core.TickCount + (ActionDelay * e.List.Count);
                 }
-            }
-            else
-            {
-                pm.SendActionMessage();
-            }
+	            else
+	            {
+	                pm.SendActionMessage();
+	            }
+	        }
         }
 
         public static void UnequipMacro(UnequipMacroEventArgs e)
         {
             PlayerMobile pm = e.Mobile as PlayerMobile;
 
-            if (pm.IsStaff() || Core.TickCount - pm.NextActionTime >= 0)
+            if (pm != null && pm.Backpack != null && pm.Alive && e.List != null && e.List.Count > 0)
             {
-                if (pm != null && pm.Backpack != null && pm.Alive && e.List != null && e.List.Count > 0)
+                if (pm.IsStaff() || Core.TickCount - pm.NextActionTime >= 0)
                 {
                     Container pack = pm.Backpack;
 
@@ -950,14 +946,14 @@ namespace Server.Mobiles
                         }
                     }
 
-                    pm.NextActionTime = Core.TickCount + Mobile.ActionDelay;
+                    pm.NextActionTime = Core.TickCount + ActionDelay;
                     ColUtility.Free(worn);
                 }
-            }
-            else
-            {
-                pm.SendActionMessage();
-            }
+	            else
+	            {
+	                pm.SendActionMessage();
+	            }
+	        }
         }
         #endregion
 
@@ -1511,7 +1507,7 @@ namespace Server.Mobiles
             }
             catch (Exception e)
             {
-                Server.Diagnostics.ExceptionLogging.LogException(e);
+                Diagnostics.ExceptionLogging.LogException(e);
             }
             finally
             {
@@ -1926,10 +1922,7 @@ namespace Server.Mobiles
         public override int StamMax => base.StamMax + AosAttributes.GetValue(this, AosAttribute.BonusStam);
 
         [CommandProperty(AccessLevel.GameMaster)]
-        public override int ManaMax => base.ManaMax + AosAttributes.GetValue(this, AosAttribute.BonusMana) +
-                       (Race == Race.Elf ? 20 : 0) +
-                       MasteryInfo.IntuitionBonus(this) +
-                       UraliTranceTonic.GetManaBuff(this);
+        public override int ManaMax => base.ManaMax + AosAttributes.GetValue(this, AosAttribute.BonusMana) + (Race == Race.Elf ? 20 : 0) + MasteryInfo.IntuitionBonus(this) + UraliTranceTonic.GetManaBuff(this);
         #endregion
 
         #region Stat Getters/Setters
@@ -2005,30 +1998,17 @@ namespace Server.Mobiles
 
             int speed = ComputeMovementSpeed(d);
 
-            bool res;
+            bool result = base.Move(d);
 
-            if (!Alive)
-            {
-                MovementImpl.IgnoreMovableImpassables = true;
-            }
-
-            res = base.Move(d);
-
-            MovementImpl.IgnoreMovableImpassables = false;
-
-            if (!res)
-            {
-                return false;
-            }
-
-            m_NextMovementTime += speed;
-
-            if (!Siege.SiegeShard && Core.TickCount - NextPassiveDetectHidden >= 0)
+            if (result && !Siege.SiegeShard && Core.TickCount - NextPassiveDetectHidden >= 0)
             {
                 DetectHidden.DoPassiveDetect(this);
                 NextPassiveDetectHidden = Core.TickCount + (int)TimeSpan.FromSeconds(2).TotalMilliseconds;
             }
-            return true;
+
+            m_NextMovementTime += speed;
+
+            return result;
         }
 
         public override bool CheckMovement(Direction d, out int newZ)
@@ -5190,13 +5170,7 @@ namespace Server.Mobiles
         public Dictionary<QuestChain, BaseChain> Chains => MondainQuestData.GetChains(this);
 
         [CommandProperty(AccessLevel.GameMaster)]
-        public bool Peaced
-        {
-            get
-            {
-                return PeacedUntil > DateTime.UtcNow;
-            }
-        }
+        public bool Peaced => PeacedUntil > DateTime.UtcNow;
 
         private Dictionary<Collection, int> m_Collections;
         private List<object> m_RewardTitles;

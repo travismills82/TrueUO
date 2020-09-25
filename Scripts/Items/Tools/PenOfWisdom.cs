@@ -2,12 +2,11 @@ using Server.Gumps;
 using Server.Multis;
 using Server.Network;
 using Server.Targeting;
-using System;
 using System.Collections.Generic;
 
 namespace Server.Items
 {
-    [FlipableAttribute(0x0FBF, 0x0FC0)]
+    [Flipable(0x0FBF, 0x0FC0)]
     public class PenOfWisdom : Item, IUsesRemaining
     {
         public override int LabelNumber => 1115358;  // Pen of Wisdom		

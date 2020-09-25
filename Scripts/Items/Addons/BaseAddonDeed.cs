@@ -155,7 +155,6 @@ namespace Server.Items
                 : base(-1, true, TargetFlags.None)
             {
                 m_Deed = deed;
-
                 CheckLOS = false;
             }
 
@@ -223,6 +222,15 @@ namespace Server.Items
                     else if (res == AddonFitResult.NoWall)
                     {
                         from.SendLocalizedMessage(500268); // This object needs to be mounted on something.
+                    }
+                    else if (res == AddonFitResult.FoundationStairs)
+                    {
+                        from.SendLocalizedMessage(1071262); // You can't place the multi-tile addon at the entrance!
+                    }
+                    else if (res == AddonFitResult.InternalStairs)
+                    {
+                        from.SendLocalizedMessage(1152735); // The targeted location has at least one impassable tile adjacent to the structure.
+                        from.SendLocalizedMessage(500277); // Construction aborted. Please try again.
                     }
 
                     if (res != AddonFitResult.Valid)

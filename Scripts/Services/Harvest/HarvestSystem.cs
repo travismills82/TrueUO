@@ -288,7 +288,7 @@ namespace Server.Engines.Harvest
             }
             catch (Exception e)
             {
-                Server.Diagnostics.ExceptionLogging.LogException(e);
+                Diagnostics.ExceptionLogging.LogException(e);
                 return null;
             }
         }
@@ -743,7 +743,10 @@ namespace Server
         private static readonly Type[] _NotChoppables = new Type[]
         {
             typeof(CommodityDeedBox), typeof(ChinaCabinet), typeof(PieSafe), typeof(AcademicBookCase), typeof(JewelryBox),
-            typeof(WoodenBookcase), typeof(Countertop), typeof(Mailbox)
+            typeof(WoodenBookcase), typeof(Countertop), typeof(Mailbox), typeof(DecorativeMagesCrystalBall), typeof(DecorativeMageThrone),
+            typeof(DecorativeMagicBookStand), typeof(DecorativeSpecimenShelve), typeof(Feedbag), typeof(ChestOfDrawers), typeof(BarrelMailbox),
+            typeof(SquirrelMailbox), typeof(FootedChestOfDrawers), typeof(CustomizableRoundedDoorMat), typeof(CowStatue),
+            typeof(DecorativeStableFencing )
         };
 
         public static bool Check(Item item)

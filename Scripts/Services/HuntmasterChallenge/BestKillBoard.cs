@@ -1,6 +1,5 @@
 using Server.Engines.HuntsmasterChallenge;
 using Server.Gumps;
-using System;
 using System.Collections.Generic;
 
 namespace Server.Items
@@ -108,7 +107,7 @@ namespace Server.Items
                 return string.Format("<BaseFont Color=#{0}>{1}</basefont>", hue.ToString(), str);
             }
 
-            public override void OnResponse(Server.Network.NetState state, RelayInfo info)
+            public override void OnResponse(Network.NetState state, RelayInfo info)
             {
                 Mobile from = state.Mobile;
 

@@ -1,7 +1,6 @@
 using Server.Engines.CityLoyalty;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Server.Items
 {
@@ -45,7 +44,7 @@ namespace Server.Items
                     from.SendLocalizedMessage(1152264); // You must wait a moment before taking another rope.
             }
             else
-                from.PrivateOverheadMessage(Server.Network.MessageType.Regular, 0x3B2, 1019045, from.NetState); // I can't reach that.
+                from.PrivateOverheadMessage(Network.MessageType.Regular, 0x3B2, 1019045, from.NetState); // I can't reach that.
         }
 
         public static Dictionary<Mobile, DateTime> _Cooldown { get; set; }
@@ -55,13 +54,22 @@ namespace Server.Items
             if (_Cooldown == null)
                 return;
 
-            List<Mobile> list = new List<Mobile>(_Cooldown.Keys);
+            var remove = new List<Mobile>();
 
-            foreach (Mobile m in list.Where(mob => _Cooldown[mob] < DateTime.UtcNow))
+            foreach (var kvp in _Cooldown)
+            {
+                if (kvp.Value < DateTime.UtcNow)
+                {
+                    remove.Add(kvp.Key);
+                }
+            }
+
+            foreach (var m in remove)
+            {
                 _Cooldown.Remove(m);
+            }
 
-            list.Clear();
-            list.TrimExcess();
+            ColUtility.Free(remove);
         }
 
         public BoxOfRopes(Serial serial)

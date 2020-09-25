@@ -1,7 +1,6 @@
 using Server.Engines.Quests;
 using Server.Gumps;
 using Server.Mobiles;
-using System;
 
 namespace Server.Services.TownCryer
 {
@@ -50,9 +49,11 @@ namespace Server.Services.TownCryer
             switch (info.ButtonID)
             {
                 case 0:
-                    TownCryerGump gump = new TownCryerGump(User, Cryer);
-                    gump.Category = TownCryerGump.GumpCategory.News;
-                    BaseGump.SendGump(gump);
+                    TownCryerGump gump = new TownCryerGump(User, Cryer)
+                    {
+                        Category = TownCryerGump.GumpCategory.News
+                    };
+                    SendGump(gump);
                     break;
                 case 1:
                     User.LaunchBrowser(Entry.InfoUrl);

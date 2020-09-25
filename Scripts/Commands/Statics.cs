@@ -422,9 +422,10 @@ namespace Server
                                 {
                                     ++totalUnfrozen;
 
-                                    Item item = new Static(oldTile.ID);
-
-                                    item.Hue = oldTile.Hue;
+                                    Item item = new Static(oldTile.ID)
+                                    {
+                                        Hue = oldTile.Hue
+                                    };
 
                                     item.MoveToWorld(new Point3D(px + xTileStart, py + yTileStart, oldTile.Z), map);
                                 }
@@ -483,7 +484,7 @@ namespace Server
             }
             catch (Exception e)
             {
-                Server.Diagnostics.ExceptionLogging.LogException(e);
+                Diagnostics.ExceptionLogging.LogException(e);
                 return null;
             }
         }
@@ -535,7 +536,7 @@ namespace Server
             }
             catch (Exception e)
             {
-                Server.Diagnostics.ExceptionLogging.LogException(e);
+                Diagnostics.ExceptionLogging.LogException(e);
                 count = -1;
             }
 

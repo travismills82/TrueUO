@@ -3,7 +3,7 @@ using System;
 
 namespace Server.Items
 {
-    [FlipableAttribute(0x9DB1, 0x9DB2)]
+    [Flipable(0x9DB1, 0x9DB2)]
     public class KotlAutomatonHead : Item, ICraftable
     {
         private bool _Activated;
@@ -67,8 +67,10 @@ namespace Server.Items
 
         public virtual KotlAutomaton GetAutomaton(Mobile master)
         {
-            KotlAutomaton automaton = new KotlAutomaton();
-            automaton.Resource = _Resource;
+            KotlAutomaton automaton = new KotlAutomaton
+            {
+                Resource = _Resource
+            };
 
             return automaton;
         }

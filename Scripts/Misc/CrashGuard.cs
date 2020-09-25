@@ -38,11 +38,12 @@ namespace Server.Misc
         {
             Console.Write("Crash: Sending email...");
 
-            MailMessage message = new MailMessage(Email.FromAddress, Email.CrashAddresses);
+            MailMessage message = new MailMessage(Email.FromAddress, Email.CrashAddresses)
+            {
+                Subject = "Automated ServUO Crash Report",
 
-            message.Subject = "Automated ServUO Crash Report";
-
-            message.Body = "Automated ServUO Crash Report. See attachment for details.";
+                Body = "Automated ServUO Crash Report. See attachment for details."
+            };
 
             message.Attachments.Add(new Attachment(filePath));
 
@@ -60,7 +61,7 @@ namespace Server.Misc
             }
             catch (Exception e)
             {
-                Server.Diagnostics.ExceptionLogging.LogException(e);
+                Diagnostics.ExceptionLogging.LogException(e);
                 return "";
             }
         }
@@ -115,7 +116,7 @@ namespace Server.Misc
             }
             catch (Exception e)
             {
-                Server.Diagnostics.ExceptionLogging.LogException(e);
+                Diagnostics.ExceptionLogging.LogException(e);
             }
         }
 
@@ -194,7 +195,7 @@ namespace Server.Misc
                     }
                     catch (Exception ex)
                     {
-                        Server.Diagnostics.ExceptionLogging.LogException(ex);
+                        Diagnostics.ExceptionLogging.LogException(ex);
                     }
 
                     try
@@ -203,7 +204,7 @@ namespace Server.Misc
                     }
                     catch (Exception ex)
                     {
-                        Server.Diagnostics.ExceptionLogging.LogException(ex);
+                        Diagnostics.ExceptionLogging.LogException(ex);
                     }
 
                     op.WriteLine("Exception:");

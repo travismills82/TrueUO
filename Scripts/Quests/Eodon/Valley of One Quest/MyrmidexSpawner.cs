@@ -88,7 +88,7 @@ namespace Server.Items
                             Spawn.Add(bc);
                             bc.MoveToWorld(p, map);
 
-                            Timer.DelayCall<BaseCreature>(creature => creature.Combatant = Focus, bc);
+                            Timer.DelayCall(creature => creature.Combatant = Focus, bc);
                         }
                     });
 
@@ -142,7 +142,7 @@ namespace Server.Items
                 Spawn.ForEach(bc => writer.Write(bc));
             }
 
-            Timer.DelayCall(TimeSpan.FromSeconds(30), CheckSpawn);
+            Timer.DelayCall(TimeSpan.FromMinutes(1), CheckSpawn);
         }
 
         public override void Deserialize(GenericReader reader)
@@ -207,7 +207,7 @@ namespace Server.Items
         public int Spawns => GetItemCount(i => i is MyrmidexHill);
 
         public EodonTribeRegion(EodonTribe tribe, Rectangle2D[] rec, int maxSpawns)
-            : base(tribe.ToString() + " tribe", Map.TerMur, Region.DefaultPriority, rec)
+            : base(tribe.ToString() + " tribe", Map.TerMur, DefaultPriority, rec)
         {
             Tribe = tribe;
             Register();

@@ -106,9 +106,11 @@ namespace Server.Mobiles
             if (Instances != null && Instances.Count > 0)
                 return null;
 
-            MercutioTheUnsavory creature = new MercutioTheUnsavory();
-            creature.Home = platLoc;
-            creature.RangeHome = 4;
+            MercutioTheUnsavory creature = new MercutioTheUnsavory
+            {
+                Home = platLoc,
+                RangeHome = 4
+            };
             creature.MoveToWorld(platLoc, platMap);
 
             return creature;
@@ -123,7 +125,7 @@ namespace Server.Mobiles
         {
             private readonly MercutioTheUnsavory Mare;
 
-            public InternalSelfDeleteTimer(Mobile p) : base(TimeSpan.FromMinutes(60))
+            public InternalSelfDeleteTimer(Mobile p) : base(TimeSpan.FromMinutes(10))
             {
                 Priority = TimerPriority.FiveSeconds;
                 Mare = ((MercutioTheUnsavory)p);
@@ -189,9 +191,10 @@ namespace Server.Mobiles
 
                 for (int i = 0; i < newBrigands; ++i)
                 {
-                    BaseCreature brigand = new Brigand();
-
-                    brigand.Team = Team;
+                    BaseCreature brigand = new Brigand
+                    {
+                        Team = Team
+                    };
 
                     bool validLocation = false;
                     Point3D loc = Location;

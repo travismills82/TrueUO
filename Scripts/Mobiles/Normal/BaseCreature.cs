@@ -791,7 +791,7 @@ namespace Server.Mobiles
             }
         }
 
-        public static bool IsSoulboundEnemies => Server.Engines.Fellowship.ForsakenFoesEvent.Instance.Running;
+        public static bool IsSoulboundEnemies => Engines.Fellowship.ForsakenFoesEvent.Instance.Running;
 
         public static Type[] _SoulboundCreatures =
         {
@@ -3444,16 +3444,9 @@ namespace Server.Mobiles
             {
                 m_ControlOrder = value;
 
-                if (m_Allured)
+                if (m_Allured && m_ControlOrder != OrderType.None)
                 {
-                    if (m_ControlOrder == OrderType.Release)
-                    {
-                        Say(502003); // Sorry, but no.
-                    }
-                    else if (m_ControlOrder != OrderType.None)
-                    {
-                        Say(1079120); // Very well.
-                    }
+                    Say(1079120); // Very well.
                 }
 
                 if (m_AI != null)
@@ -3617,7 +3610,7 @@ namespace Server.Mobiles
             m.Delete();
         }
 
-        public virtual bool DeleteOnRelease => m_bSummoned;
+        public virtual bool DeleteOnRelease => m_bSummoned || m_Allured;
 
         public virtual void OnGaveMeleeAttack(Mobile defender)
         {
@@ -5103,9 +5096,10 @@ namespace Server.Mobiles
 
             if (backpack == null)
             {
-                backpack = new Backpack();
-
-                backpack.Movable = false;
+                backpack = new Backpack
+                {
+                    Movable = false
+                };
 
                 AddItem(backpack);
             }
@@ -5274,9 +5268,10 @@ namespace Server.Mobiles
 
             if (pack == null)
             {
-                pack = new Backpack();
-
-                pack.Movable = false;
+                pack = new Backpack
+                {
+                    Movable = false
+                };
 
                 AddItem(pack);
             }
@@ -5574,10 +5569,13 @@ namespace Server.Mobiles
             }
         }
 
-        public virtual bool IsAggressiveMonster => IsMonster && (m_FightMode == FightMode.Closest ||
-                                     m_FightMode == FightMode.Strongest ||
-                                     m_FightMode == FightMode.Weakest ||
-                                     m_FightMode == FightMode.Good);
+        public virtual bool IsAggressiveMonster => IsMonster 
+        										&&
+        										 ( m_FightMode == FightMode.Closest 
+        										|| m_FightMode == FightMode.Strongest 
+        										|| m_FightMode == FightMode.Weakest 
+        										|| m_FightMode == FightMode.Good
+        										 );
 
         private class FKEntry
         {
@@ -5779,17 +5777,9 @@ namespace Server.Mobiles
                 }
             }
         }
-
-        public virtual bool GivesMLMinorArtifact => false;
         #endregion
 
-        public virtual void OnRelease(Mobile from)
-        {
-            if (m_Allured)
-            {
-                Timer.DelayCall(TimeSpan.FromSeconds(2), Delete);
-            }
-        }
+        public virtual bool GivesMLMinorArtifact => false;
 
         public override void OnItemLifted(Mobile from, Item item)
         {
@@ -6695,11 +6685,13 @@ namespace Server.Mobiles
 
                 if (inst == null)
                 {
-                    inst = new Harp();
-                    inst.SuccessSound = PlayInstrumentSound ? 0x58B : 0;
-                    inst.FailureSound = PlayInstrumentSound ? 0x58C : 0;
-                    inst.Movable = false;
-                    inst.Quality = ItemQuality.Exceptional;
+                    inst = new Harp
+                    {
+                        SuccessSound = PlayInstrumentSound ? 0x58B : 0,
+                        FailureSound = PlayInstrumentSound ? 0x58C : 0,
+                        Movable = false,
+                        Quality = ItemQuality.Exceptional
+                    };
 
                     PackItem(inst);
                 }
@@ -7543,7 +7535,7 @@ namespace Server.Mobiles
         public List<BaseCreature> ToDelete { get; set; } = new List<BaseCreature>();
 
         public CreatureDeleteTimer()
-            : base(TimeSpan.FromMinutes(5), TimeSpan.FromSeconds(5))
+            : base(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5))
         {
             Priority = TimerPriority.OneMinute;
         }

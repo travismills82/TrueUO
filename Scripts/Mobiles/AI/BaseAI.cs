@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MoveImpl = Server.Movement.MovementImpl;
 #endregion
 
 namespace Server.Mobiles
@@ -1816,7 +1815,7 @@ namespace Server.Mobiles
 
             if (m_Mobile.DeleteOnRelease || m_Mobile.IsDeadPet)
             {
-                Timer.DelayCall(TimeSpan.FromSeconds(2), m_Mobile.Delete);
+                Timer.DelayCall(TimeSpan.FromSeconds(1), m_Mobile.Delete);
             }
             else
             {
@@ -2331,13 +2330,10 @@ namespace Server.Mobiles
 
             m_Mobile.Pushing = false;
 
-            MoveImpl.IgnoreMovableImpassables = (m_Mobile.CanMoveOverObstacles && !m_Mobile.CanDestroyObstacles);
-
             if ((m_Mobile.Direction & Direction.Mask) != (d & Direction.Mask))
             {
                 bool v = m_Mobile.Move(d);
 
-                MoveImpl.IgnoreMovableImpassables = false;
                 return (v ? MoveResult.Success : MoveResult.Blocked);
             }
             if (!m_Mobile.Move(d))
@@ -2466,19 +2462,16 @@ namespace Server.Mobiles
 
                         if (m_Mobile.Move(m_Mobile.Direction))
                         {
-                            MoveImpl.IgnoreMovableImpassables = false;
                             return MoveResult.SuccessAutoTurn;
                         }
                     }
 
-                    MoveImpl.IgnoreMovableImpassables = false;
                     return (wasPushing ? MoveResult.BadState : MoveResult.Blocked);
                 }
-                MoveImpl.IgnoreMovableImpassables = false;
+
                 return MoveResult.Success;
             }
 
-            MoveImpl.IgnoreMovableImpassables = false;
             return MoveResult.Success;
         }
 
@@ -2627,8 +2620,10 @@ namespace Server.Mobiles
             }
             else if (!DoMove(m_Mobile.GetDirectionTo(p), true))
             {
-                m_Path = new PathFollower(m_Mobile, p);
-                m_Path.Mover = DoMoveImpl;
+                m_Path = new PathFollower(m_Mobile, p)
+                {
+                    Mover = DoMoveImpl
+                };
 
                 if (m_Path.Follow(run, 1))
                 {
@@ -2702,8 +2697,10 @@ namespace Server.Mobiles
 
                             if (!DoMove(dirTo, true) && needCloser)
                             {
-                                m_Path = new PathFollower(m_Mobile, p);
-                                m_Path.Mover = DoMoveImpl;
+                                m_Path = new PathFollower(m_Mobile, p)
+                                {
+                                    Mover = DoMoveImpl
+                                };
 
                                 if (m_Path.Follow(bRun, 1))
                                 {

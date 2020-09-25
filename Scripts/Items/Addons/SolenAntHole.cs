@@ -1,7 +1,6 @@
 using Server.Mobiles;
 using Server.Network;
 using Server.Spells;
-using System;
 using System.Collections.Generic;
 
 namespace Server.Items
@@ -155,7 +154,7 @@ namespace Server.Items
 
             writer.WriteEncodedInt(0); // version
 
-            writer.WriteMobileList<Mobile>(m_Spawned);
+            writer.WriteMobileList(m_Spawned);
         }
 
         public override void Deserialize(GenericReader reader)

@@ -313,9 +313,9 @@ namespace Server
                     {
                         totalDamage /= 2;
                     }
-                    else if (type == DamageType.Melee && toCreature != null && toCreature.Controlled)
+                    else if (toCreature != null && toCreature.Controlled)
                     {
-                        totalDamage += (int)((double)totalDamage * 0.10);
+                        totalDamage += (int)(totalDamage * 0.10);
                     }
                 }
             }
@@ -2254,8 +2254,10 @@ namespace Server
                 if (m_Mods == null)
                     m_Mods = new List<SkillMod>();
 
-                SkillMod sk = new DefaultSkillMod(skill, true, bonus);
-                sk.ObeyCap = true;
+                SkillMod sk = new DefaultSkillMod(skill, true, bonus)
+                {
+                    ObeyCap = true
+                };
                 m.AddSkillMod(sk);
                 m_Mods.Add(sk);
             }

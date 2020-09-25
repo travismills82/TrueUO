@@ -40,9 +40,10 @@ namespace Server.RemoteAdmin
 
             try
             {
-                m_Output = new StreamWriter(Path.Combine(directory, string.Format(LogSubDirectory + "{0}.log", DateTime.UtcNow.ToString("yyyyMMdd"))), true);
-
-                m_Output.AutoFlush = true;
+                m_Output = new StreamWriter(Path.Combine(directory, string.Format(LogSubDirectory + "{0}.log", DateTime.UtcNow.ToString("yyyyMMdd"))), true)
+                {
+                    AutoFlush = true
+                };
 
                 m_Output.WriteLine("##############################");
                 m_Output.WriteLine("Log started on {0}", DateTime.UtcNow);
@@ -51,7 +52,7 @@ namespace Server.RemoteAdmin
             catch (Exception e)
             {
                 Console.WriteLine("RemoteAdminLogging: Failed to initialize LogWriter.");
-                Server.Diagnostics.ExceptionLogging.LogException(e);
+                Diagnostics.ExceptionLogging.LogException(e);
                 m_Enabled = false;
             }
         }
@@ -101,7 +102,7 @@ namespace Server.RemoteAdmin
             }
             catch (Exception e)
             {
-                Server.Diagnostics.ExceptionLogging.LogException(e);
+                Diagnostics.ExceptionLogging.LogException(e);
             }
         }
     }

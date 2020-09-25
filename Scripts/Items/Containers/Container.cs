@@ -3,7 +3,6 @@ using Server.ContextMenus;
 using Server.Mobiles;
 using Server.Multis;
 using Server.Network;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -695,8 +694,10 @@ namespace Server.Items
                 }
                 else
                 {
-                    WaterBarrel barrel = new WaterBarrel();
-                    barrel.Movable = false;
+                    WaterBarrel barrel = new WaterBarrel
+                    {
+                        Movable = false
+                    };
                     barrel.MoveToWorld(Location, Map);
 
                     beverage.Pour_OnTarget(from, barrel);
@@ -1310,7 +1311,7 @@ namespace Server.Items
     }
 
     [Furniture]
-    [FlipableAttribute(0x4026, 0x4025)]
+    [Flipable(0x4026, 0x4025)]
     public class GargishChest : LockableContainer
     {
         [Constructable]
@@ -1339,7 +1340,7 @@ namespace Server.Items
     }
 
     [Furniture]
-    [FlipableAttribute(0xA99, 0xA97)]
+    [Flipable(0xA99, 0xA97)]
     public class AcademicBookCase : BaseContainer
     {
         public override int LabelNumber => 1071213;  // academic bookcase
@@ -1370,7 +1371,7 @@ namespace Server.Items
         }
     }
 
-    [FlipableAttribute(0xA0DB, 0xA0DC)]
+    [Flipable(0xA0DB, 0xA0DC)]
     public class EnchantedPicnicBasket : BaseContainer
     {
         public override int LabelNumber => 1158333;  // enchanted picnic basket

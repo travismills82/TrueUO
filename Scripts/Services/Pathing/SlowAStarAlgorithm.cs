@@ -1,4 +1,3 @@
-using Server.Mobiles;
 using System;
 using CalcMoves = Server.Movement.Movement;
 using MoveImpl = Server.Movement.MovementImpl;
@@ -44,19 +43,21 @@ namespace Server.PathAlgorithms.SlowAStar
         {
             m_Goal = goal;
 
-            BaseCreature bc = p as BaseCreature;
-
             PathNode curNode;
 
-            PathNode goalNode = new PathNode();
-            goalNode.x = goal.X;
-            goalNode.y = goal.Y;
-            goalNode.z = goal.Z;
+            PathNode goalNode = new PathNode
+            {
+                x = goal.X,
+                y = goal.Y,
+                z = goal.Z
+            };
 
-            PathNode startNode = new PathNode();
-            startNode.x = start.X;
-            startNode.y = start.Y;
-            startNode.z = start.Z;
+            PathNode startNode = new PathNode
+            {
+                x = start.X,
+                y = start.Y,
+                z = start.Z
+            };
             startNode.h = Heuristic(startNode.x, startNode.y, startNode.z);
 
             PathNode[] closed = m_Closed, open = m_Open, successors = m_Successors;
@@ -151,12 +152,6 @@ namespace Server.PathAlgorithms.SlowAStar
 
                 sucCount = 0;
 
-                if (bc != null)
-                {
-                    MoveImpl.AlwaysIgnoreDoors = bc.CanOpenDoors;
-                    MoveImpl.IgnoreMovableImpassables = bc.CanMoveOverObstacles;
-                }
-
                 MoveImpl.Goal = goal;
 
                 for (int i = 0; i < 8; ++i)
@@ -206,8 +201,6 @@ namespace Server.PathAlgorithms.SlowAStar
                     }
                 }
 
-                MoveImpl.AlwaysIgnoreDoors = false;
-                MoveImpl.IgnoreMovableImpassables = false;
                 MoveImpl.Goal = Point3D.Zero;
 
                 if (sucCount == 0 || ++depth > MaxDepth)

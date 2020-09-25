@@ -65,9 +65,11 @@ namespace Server.Mobiles
             if (Instances != null && Instances.Count > 0)
                 return null;
 
-            ObsidianWyvern creature = new ObsidianWyvern();
-            creature.Home = platLoc;
-            creature.RangeHome = 4;
+            ObsidianWyvern creature = new ObsidianWyvern
+            {
+                Home = platLoc,
+                RangeHome = 4
+            };
             creature.MoveToWorld(platLoc, platMap);
 
             return creature;
@@ -77,7 +79,7 @@ namespace Server.Mobiles
         {
             private readonly ObsidianWyvern Mare;
 
-            public InternalSelfDeleteTimer(Mobile p) : base(TimeSpan.FromMinutes(60))
+            public InternalSelfDeleteTimer(Mobile p) : base(TimeSpan.FromMinutes(10))
             {
                 Priority = TimerPriority.FiveSeconds;
                 Mare = ((ObsidianWyvern)p);

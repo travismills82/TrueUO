@@ -57,66 +57,66 @@ namespace Server.Misc
         private static readonly bool[] UseAntiMacro =
         {
 			// true if this skill uses the anti-macro code, false if it does not
-			false, // Alchemy = 0,
-			true, // Anatomy = 1,
-			true, // AnimalLore = 2,
-			true, // ItemID = 3,
-			true, // ArmsLore = 4,
-			false, // Parry = 5,
-			true, // Begging = 6,
-			false, // Blacksmith = 7,
-			false, // Fletching = 8,
-			true, // Peacemaking = 9,
-			true, // Camping = 10,
-			false, // Carpentry = 11,
-			false, // Cartography = 12,
-			false, // Cooking = 13,
-			true, // DetectHidden = 14,
-			true, // Discordance = 15,
-			true, // EvalInt = 16,
-			true, // Healing = 17,
-			true, // Fishing = 18,
-			true, // Forensics = 19,
-			true, // Herding = 20,
-			true, // Hiding = 21,
-			true, // Provocation = 22,
-			false, // Inscribe = 23,
-			true, // Lockpicking = 24,
-			true, // Magery = 25,
-			true, // MagicResist = 26,
-			false, // Tactics = 27,
-			true, // Snooping = 28,
-			true, // Musicianship = 29,
-			true, // Poisoning = 30,
-			false, // Archery = 31,
-			true, // SpiritSpeak = 32,
-			true, // Stealing = 33,
-			false, // Tailoring = 34,
-			true, // AnimalTaming = 35,
-			true, // TasteID = 36,
-			false, // Tinkering = 37,
-			true, // Tracking = 38,
-			true, // Veterinary = 39,
-			false, // Swords = 40,
-			false, // Macing = 41,
-			false, // Fencing = 42,
-			false, // Wrestling = 43,
-			true, // Lumberjacking = 44,
-			true, // Mining = 45,
-			true, // Meditation = 46,
-			true, // Stealth = 47,
-			true, // RemoveTrap = 48,
-			true, // Necromancy = 49,
-			false, // Focus = 50,
-			true, // Chivalry = 51
-			true, // Bushido = 52
-			true, //Ninjitsu = 53
-			true, // Spellweaving = 54
+			false, 	// Alchemy = 0,
+			true, 	// Anatomy = 1,
+			true, 	// AnimalLore = 2,
+			true, 	// ItemID = 3,
+			true, 	// ArmsLore = 4,
+			false, 	// Parry = 5,
+			true, 	// Begging = 6,
+			false, 	// Blacksmith = 7,
+			false, 	// Fletching = 8,
+			true, 	// Peacemaking = 9,
+			true, 	// Camping = 10,
+			false, 	// Carpentry = 11,
+			false, 	// Cartography = 12,
+			false, 	// Cooking = 13,
+			true, 	// DetectHidden = 14,
+			true, 	// Discordance = 15,
+			true, 	// EvalInt = 16,
+			true, 	// Healing = 17,
+			true, 	// Fishing = 18,
+			true, 	// Forensics = 19,
+			true, 	// Herding = 20,
+			true, 	// Hiding = 21,
+			true, 	// Provocation = 22,
+			false, 	// Inscribe = 23,
+			true, 	// Lockpicking = 24,
+			true, 	// Magery = 25,
+			true, 	// MagicResist = 26,
+			false, 	// Tactics = 27,
+			true, 	// Snooping = 28,
+			true, 	// Musicianship = 29,
+			true, 	// Poisoning = 30,
+			false, 	// Archery = 31,
+			true, 	// SpiritSpeak = 32,
+			true, 	// Stealing = 33,
+			false, 	// Tailoring = 34,
+			true, 	// AnimalTaming = 35,
+			true, 	// TasteID = 36,
+			false, 	// Tinkering = 37,
+			true, 	// Tracking = 38,
+			true, 	// Veterinary = 39,
+			false, 	// Swords = 40,
+			false, 	// Macing = 41,
+			false, 	// Fencing = 42,
+			false, 	// Wrestling = 43,
+			true, 	// Lumberjacking = 44,
+			true, 	// Mining = 45,
+			true, 	// Meditation = 46,
+			true, 	// Stealth = 47,
+			true, 	// RemoveTrap = 48,
+			true, 	// Necromancy = 49,
+			false, 	// Focus = 50,
+			true, 	// Chivalry = 51
+			true, 	// Bushido = 52
+			true, 	// Ninjitsu = 53
+			true, 	// Spellweaving = 54
 
 			#region Stygian Abyss
-			true, // Mysticism = 55
-			true, // Imbuing = 56
-			false // Throwing = 57
+			true, 	// Mysticism = 55
+			true, 	// Imbuing = 56
+			false,  // Throwing = 57
 			#endregion
 		};
 
@@ -311,7 +311,7 @@ namespace Server.Misc
 
         private static bool AllowGain(Mobile from, Skill skill, object obj)
         {
-            if (Server.Engines.VvV.ViceVsVirtueSystem.InSkillLoss(from)) //Changed some time between the introduction of AoS and SE.
+            if (Engines.VvV.ViceVsVirtueSystem.InSkillLoss(from)) //Changed some time between the introduction of AoS and SE.
                 return false;
 
             if (from is PlayerMobile)
@@ -397,7 +397,7 @@ namespace Server.Misc
                 #endregion
 
                 #region Skill Masteries
-                else if (from is BaseCreature && !(from is Server.Engines.Despise.DespiseCreature) && (((BaseCreature)from).Controlled || ((BaseCreature)from).Summoned))
+                else if (from is BaseCreature && !(from is Engines.Despise.DespiseCreature) && (((BaseCreature)from).Controlled || ((BaseCreature)from).Summoned))
                 {
                     Mobile master = ((BaseCreature)from).GetMaster();
 

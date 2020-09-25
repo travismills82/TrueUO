@@ -1,5 +1,4 @@
 using Server.Mobiles;
-using System;
 
 namespace Server.Gumps
 {
@@ -47,7 +46,7 @@ namespace Server.Gumps
             Next,
             Accept,
         }
-        public override void OnResponse(Server.Network.NetState state, RelayInfo info)
+        public override void OnResponse(Network.NetState state, RelayInfo info)
         {
             switch (info.ButtonID)
             {
