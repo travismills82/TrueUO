@@ -5,8 +5,10 @@ using Server.Items;
 using Server.Mobiles;
 using Server.Spells;
 using Server.Targeting;
+
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Server.Multis
 {
@@ -381,6 +383,11 @@ namespace Server.Multis
             else if (SpellHelper.RestrictRedTravel && from.Murderer && destMap.Rules != MapRules.FeluccaRules && !Siege.SiegeShard)
             {
                 from.SendLocalizedMessage(1019004); // You are not allowed to travel there.
+                return false;
+            }
+            else if (Region.FindRegions(dest, destMap).Any(r => r.Name == "Abyss") && from is PlayerMobile && !((PlayerMobile)from).AbyssEntry)
+            {
+                from.SendLocalizedMessage(1112226); // Thou must be on a Sacred Quest to pass through.
                 return false;
             }
             else if (CityTradeSystem.HasTrade(from))

@@ -19,24 +19,10 @@ namespace Server.Engines.Quests
             EventSink.Login += OnLogin;
         }
 
-        public static readonly Type[] QuestTypes = new Type[]
-        {
-            typeof(Doom.TheSummoningQuest),
-            typeof(Necro.DarkTidesQuest),
-            typeof(Haven.UzeraanTurmoilQuest),
-            typeof(Collector.CollectorQuest),
-            typeof(Hag.WitchApprenticeQuest),
-            typeof(Naturalist.StudyOfSolenQuest),
-            typeof(Matriarch.SolenMatriarchQuest),
-            typeof(Ambitious.AmbitiousQueenQuest),
-            typeof(Ninja.EminosUndertakingQuest),
-            typeof(Samurai.HaochisTrialsQuest),
-            typeof(Zento.TerribleHatchlingsQuest)
-        };
         private PlayerMobile m_From;
         private ArrayList m_Objectives;
         private ArrayList m_Conversations;
-        private Timer m_Timer;
+
         public QuestSystem(PlayerMobile from)
         {
             m_From = from;
@@ -53,7 +39,7 @@ namespace Server.Engines.Quests
         public abstract int Picture { get; }
         public abstract bool IsTutorial { get; }
         public abstract TimeSpan RestartDelay { get; }
-        public abstract Type[] TypeReferenceTable { get; }
+
         public PlayerMobile From
         {
             get
@@ -87,6 +73,9 @@ namespace Server.Engines.Quests
                 m_Conversations = value;
             }
         }
+
+        private static readonly string _TimerID = "QuestTimer";
+
         public static bool CanOfferQuest(Mobile check, Type questType)
         {
             bool inRestartPeriod;
@@ -168,18 +157,12 @@ namespace Server.Engines.Quests
 
         public virtual void StartTimer()
         {
-            if (m_Timer != null)
-                return;
-
-            m_Timer = Timer.DelayCall(TimeSpan.FromSeconds(0.5), TimeSpan.FromSeconds(0.5), Slice);
+            TimerRegistry.Register<QuestSystem>(_TimerID, this, TimeSpan.FromSeconds(0.5), TimeSpan.FromSeconds(0.5), false, q => q.Slice());
         }
 
         public virtual void StopTimer()
         {
-            if (m_Timer != null)
-                m_Timer.Stop();
-
-            m_Timer = null;
+            TimerRegistry.RemoveFromRegistry<QuestSystem>(_TimerID, this);
         }
 
         public virtual void Slice()
@@ -195,13 +178,13 @@ namespace Server.Engines.Quests
 
         public static void OnKilledBy(OnKilledByEventArgs e)
         {
-            if (e.KilledBy is PlayerMobile && e.Killed is BaseCreature)
+            if (e.KilledBy is PlayerMobile pm && e.Killed is BaseCreature bc)
             {
-                QuestSystem qs = ((PlayerMobile)e.KilledBy).Quest;
+                QuestSystem qs = pm.Quest;
 
                 if (qs != null)
                 {
-                    qs.OnKill((BaseCreature)e.Killed, e.Killed.Corpse);
+                    qs.OnKill(bc, bc.Corpse);
                 }
             }
         }
@@ -246,8 +229,6 @@ namespace Server.Engines.Quests
 
         public virtual void BaseDeserialize(GenericReader reader)
         {
-            Type[] referenceTable = TypeReferenceTable;
-
             int version = reader.ReadEncodedInt();
 
             switch (version)
@@ -260,7 +241,7 @@ namespace Server.Engines.Quests
 
                         for (int i = 0; i < count; ++i)
                         {
-                            QuestObjective obj = QuestSerializer.DeserializeObjective(referenceTable, reader);
+                            QuestObjective obj = QuestSerializer.DeserializeObjective(this, reader);
 
                             if (obj != null)
                             {
@@ -275,7 +256,7 @@ namespace Server.Engines.Quests
 
                         for (int i = 0; i < count; ++i)
                         {
-                            QuestConversation conv = QuestSerializer.DeserializeConversation(referenceTable, reader);
+                            QuestConversation conv = QuestSerializer.DeserializeConversation(this, reader);
 
                             if (conv != null)
                             {
@@ -298,19 +279,17 @@ namespace Server.Engines.Quests
 
         public virtual void BaseSerialize(GenericWriter writer)
         {
-            Type[] referenceTable = TypeReferenceTable;
-
             writer.WriteEncodedInt(0); // version
 
             writer.WriteEncodedInt(m_Objectives.Count);
 
             for (int i = 0; i < m_Objectives.Count; ++i)
-                QuestSerializer.Serialize(referenceTable, (QuestObjective)m_Objectives[i], writer);
+                QuestSerializer.Serialize(this, (QuestObjective)m_Objectives[i], writer);
 
             writer.WriteEncodedInt(m_Conversations.Count);
 
             for (int i = 0; i < m_Conversations.Count; ++i)
-                QuestSerializer.Serialize(referenceTable, (QuestConversation)m_Conversations[i], writer);
+                QuestSerializer.Serialize(this, (QuestConversation)m_Conversations[i], writer);
 
             ChildSerialize(writer);
         }

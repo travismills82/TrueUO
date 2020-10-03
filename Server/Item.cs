@@ -1002,7 +1002,7 @@ namespace Server
 		{
 			try
 			{
-				return Ultima.Art.GetStatic(itemID);
+				return ArtData.GetStatic(itemID);
 			}
 			catch (Exception e)
 			{
@@ -1014,7 +1014,7 @@ namespace Server
 
 		public static void Measure(Bitmap bmp, out int xMin, out int yMin, out int xMax, out int yMax)
 		{
-			Ultima.Art.Measure(bmp, out xMin, out yMin, out xMax, out yMax);
+			ArtData.Measure(bmp, out xMin, out yMin, out xMax, out yMax);
 		}
 
 		public static Rectangle MeasureBound(Bitmap bmp)
@@ -6173,7 +6173,9 @@ namespace Server
 			{
 				Instance = this;
 				Start();
-			}
+
+                Priority = TimerPriority.FiftyMS;
+            }
 
 			public static bool HasTimer(ItemSocket socket)
 			{

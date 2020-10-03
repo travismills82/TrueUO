@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "kylsPd+eYxFeIJzBpn6KfBW7JZ6qVl0pYHd/3SYOiAU0SZWwKxvGBkMRo5fsbOcJ4HXU8z1qM469yuqJ0kFO3g==",
+  "success": true,
+  "projectFilePath": "C:\\git\\TrueUO\\Ultima\\Ultima.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Travis\\.nuget\\packages\\microsoft.netframework.referenceassemblies\\1.0.0\\microsoft.netframework.referenceassemblies.1.0.0.nupkg.sha512",
+    "C:\\Users\\Travis\\.nuget\\packages\\microsoft.netframework.referenceassemblies.net48\\1.0.0\\microsoft.netframework.referenceassemblies.net48.1.0.0.nupkg.sha512",
+    "C:\\Users\\Travis\\.nuget\\packages\\system.drawing.common\\4.7.0\\system.drawing.common.4.7.0.nupkg.sha512"
+  ],
+  "logs": []
+}

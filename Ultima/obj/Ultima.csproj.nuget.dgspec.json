@@ -1,0 +1,57 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\git\\TrueUO\\Ultima\\Ultima.csproj": {}
+  },
+  "projects": {
+    "C:\\git\\TrueUO\\Ultima\\Ultima.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\git\\TrueUO\\Ultima\\Ultima.csproj",
+        "projectName": "Ultima",
+        "projectPath": "C:\\git\\TrueUO\\Ultima\\Ultima.csproj",
+        "packagesPath": "C:\\Users\\Travis\\.nuget\\packages\\",
+        "outputPath": "C:\\git\\TrueUO\\Ultima\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Travis\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net48"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net48": {
+            "targetAlias": "net48",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net48": {
+          "targetAlias": "net48",
+          "dependencies": {
+            "Microsoft.NETFramework.ReferenceAssemblies": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.0.0, )",
+              "autoReferenced": true
+            },
+            "System.Drawing.Common": {
+              "target": "Package",
+              "version": "[4.7.0, )"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100-preview.8.20417.9\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

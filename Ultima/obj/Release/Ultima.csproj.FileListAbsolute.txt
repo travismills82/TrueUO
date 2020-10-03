@@ -1,0 +1,8 @@
+C:\git\TrueUO\Ultima\bin\Release\Ultima.dll
+C:\git\TrueUO\Ultima\bin\Release\Ultima.pdb
+C:\git\TrueUO\Ultima\bin\Release\System.Drawing.Common.dll
+C:\git\TrueUO\Ultima\obj\Release\Ultima.csprojAssemblyReference.cache
+C:\git\TrueUO\Ultima\obj\Release\Ultima.csproj.CoreCompileInputs.cache
+C:\git\TrueUO\Ultima\obj\Release\Ultima.csproj.CopyComplete
+C:\git\TrueUO\Ultima\obj\Release\Ultima.dll
+C:\git\TrueUO\Ultima\obj\Release\Ultima.pdb
