@@ -39,7 +39,7 @@ namespace Server.Mobiles
             Karma = 0;
 
             Tamable = true;
-            ControlSlots = 3;
+            ControlSlots = 4;
             MinTameSkill = 102.0;
 
             SetAreaEffect(AreaEffect.AuraDamage);
