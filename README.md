@@ -31,8 +31,8 @@ Run `Compile.WIN - Release.bat` for production environments.
 
 #### Ubuntu / Debian
 
-`apt-get install zlib1g-dev`  
-`apt-get install mono-complete`  
+`apt-get install zlib1g-dev`
+`apt-get install mono-complete`
 `make`
 
 
@@ -44,3 +44,13 @@ A [Quick Start] guide is available for more information on setting up your world
    [ServUO]: <https://www.servuo.com>
    [Quick Start]: <https://www.servuo.com/wiki/startup/>
    [.NET Framework 4.8]: <https://dotnet.microsoft.com/download/dotnet-framework/net48>
+
+### UO SERVER
+----
+server address:	ultimaonline.duckdns.org port 2593
+
+Patch Client Encryption checked, Use OSI Encryption unchecked.
+
+![alt text](https://github.com/travismills82/TrueUO/blob/master/razor.png)
+
+Install .net SDK to compile TrueUO https://dotnet.microsoft.com/download/dotnet/thank-you/sdk-5.0.100-preview.8-windows-x64-installer
