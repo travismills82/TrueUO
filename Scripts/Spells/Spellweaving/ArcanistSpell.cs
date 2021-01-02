@@ -57,9 +57,9 @@ namespace Server.Spells.Spellweaving
                 return null;
             }
 
-            if (from.Holding is ArcaneFocus)
+            if (from.Holding is ArcaneFocus focus)
             {
-                return (ArcaneFocus)from.Holding;
+                return focus;
             }
 
             return from.Backpack.FindItemByType<ArcaneFocus>();
@@ -72,13 +72,7 @@ namespace Server.Spells.Spellweaving
                 return false;
             }
 
-            if (!MondainsLegacy.Spellweaving)
-            {
-                Caster.SendLocalizedMessage(1042753, "Spellweaving"); // ~1_SOMETHING~ has been temporarily disabled.
-                return false;
-            }
-
-            if (Caster is PlayerMobile && !((PlayerMobile)Caster).Spellweaving)
+            if (Caster is PlayerMobile pm && !pm.Spellweaving)
             {
                 Caster.SendLocalizedMessage(1073220); // You must have completed the epic arcanist quest to use this ability.
                 return false;

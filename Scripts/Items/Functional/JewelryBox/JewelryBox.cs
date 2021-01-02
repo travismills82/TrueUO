@@ -1,4 +1,5 @@
 using Server.ContextMenus;
+using Server.Gumps;
 using Server.Multis;
 using Server.Network;
 using System;
@@ -8,7 +9,7 @@ namespace Server.Items
 {
     [Furniture]
     [Flipable(0x9F1C, 0x9F1D)]
-    public class JewelryBox : Container, IDyable
+    public class JewelryBox : Container, IDyable, ISecurable
     {
         public override int LabelNumber => 1157694;  // Jewelry Box
 
@@ -110,26 +111,27 @@ namespace Server.Items
                 from.SendLocalizedMessage(1157727); // The jewelry box must be secured before you can use it.
                 return false;
             }
-            else if (!CheckAccessible(from, this))
+
+            if (!CheckAccessible(from, this))
             {
                 PrivateOverheadMessage(MessageType.Regular, 946, 1010563, from.NetState); // This container is secure.
                 return false;
             }
-            else if (!IsAccept(dropped))
+
+            if (!IsAccept(dropped))
             {
                 from.SendLocalizedMessage(1157724); // This is not a ring, bracelet, necklace, earring, or talisman.
                 return false;
             }
-            else if (IsFull)
+
+            if (IsFull)
             {
                 from.SendLocalizedMessage(1157723); // The jewelry box is full.
                 return false;
             }
-            else
-            {
-                Timer.DelayCall(TimeSpan.FromSeconds(1), () => from.SendGump(new JewelryBoxGump(from, this)));
-                return base.OnDragDrop(from, dropped);
-            }
+
+            Timer.DelayCall(TimeSpan.FromSeconds(1), () => from.SendGump(new JewelryBoxGump(from, this)));
+            return base.OnDragDrop(from, dropped);
         }
 
         public override bool DisplaysContent => false;
@@ -164,7 +166,7 @@ namespace Server.Items
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-            int version = reader.ReadInt();
+            reader.ReadInt();
 
             Level = (SecureLevel)reader.ReadInt();
             Filter = new JewelryBoxFilter(reader);

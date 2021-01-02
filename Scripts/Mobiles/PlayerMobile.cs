@@ -1,6 +1,7 @@
 #region References
 using Server.Accounting;
 using Server.ContextMenus;
+using Server.Engines.ArenaSystem;
 using Server.Engines.BulkOrders;
 using Server.Engines.CannedEvil;
 using Server.Engines.CityLoyalty;
@@ -36,9 +37,9 @@ using Server.Spells.SkillMasteries;
 using Server.Targeting;
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
 using RankDefinition = Server.Guilds.RankDefinition;
 #endregion
 
@@ -195,24 +196,6 @@ namespace Server.Mobiles
             return map.CanFit(p.X, p.Y, p.Z, 16, false, false);
         }
         #endregion
-
-        private class CountAndTimeStamp
-        {
-            private int m_Count;
-            private DateTime m_Stamp;
-
-            public DateTime TimeStamp => m_Stamp;
-
-            public int Count
-            {
-                get { return m_Count; }
-                set
-                {
-                    m_Count = value;
-                    m_Stamp = DateTime.UtcNow;
-                }
-            }
-        }
 
         private DesignContext m_DesignContext;
 
@@ -1271,7 +1254,7 @@ namespace Server.Mobiles
                 from.Map = Map.Felucca;
             }
 
-            if (from.NetState != null && from.NetState.IsEnhancedClient && from.Mount is EtherealMount)
+            if (from.NetState != null && from.NetState.IsEnhancedClient && from.Mount is EtherealMount fromMount)
             {
                 Timer.DelayCall(TimeSpan.FromSeconds(1), mount =>
                 {
@@ -1280,7 +1263,7 @@ namespace Server.Mobiles
                         mount.Rider = from;
                     }
                 },
-                (EtherealMount)from.Mount);
+                fromMount);
             }
 
             from.CheckStatTimers();
@@ -1343,10 +1326,8 @@ namespace Server.Mobiles
                         drop = true;
                     }
 
-                    if (item is BaseWeapon)
+                    if (item is BaseWeapon weapon)
                     {
-                        BaseWeapon weapon = (BaseWeapon)item;
-
                         if (!drop)
                         {
                             if (dex < weapon.DexRequirement)
@@ -1377,10 +1358,8 @@ namespace Server.Mobiles
                             moved = true;
                         }
                     }
-                    else if (item is BaseArmor)
+                    else if (item is BaseArmor armor)
                     {
-                        BaseArmor armor = (BaseArmor)item;
-
                         if (!drop)
                         {
                             if (!armor.AllowMaleWearer && !from.Female && from.AccessLevel < AccessLevel.GameMaster)
@@ -1434,10 +1413,8 @@ namespace Server.Mobiles
                             moved = true;
                         }
                     }
-                    else if (item is BaseClothing)
+                    else if (item is BaseClothing clothing)
                     {
-                        BaseClothing clothing = (BaseClothing)item;
-
                         if (!drop)
                         {
                             if (!clothing.AllowMaleWearer && !from.Female && from.AccessLevel < AccessLevel.GameMaster)
@@ -1697,9 +1674,9 @@ namespace Server.Mobiles
         public override void AggressiveAction(Mobile aggressor, bool criminal)
         {
             // This will update aggressor for the aggressors master
-            if (aggressor is BaseCreature && ((BaseCreature)aggressor).ControlMaster != null && ((BaseCreature)aggressor).ControlMaster != this)
+            if (aggressor is BaseCreature creature && creature.ControlMaster != null && creature.ControlMaster != this)
             {
-                Mobile aggressiveMaster = ((BaseCreature)aggressor).ControlMaster;
+                Mobile aggressiveMaster = creature.ControlMaster;
 
                 // First lets find out if the creatures master is in our aggressor list
                 AggressorInfo info = Aggressors.FirstOrDefault(i => i.Attacker == aggressiveMaster);
@@ -1750,7 +1727,7 @@ namespace Server.Mobiles
                 else
                 {
                     // not in the list, so we're adding it
-                    aggressor.Aggressed.Add(AggressorInfo.Create(aggressiveMaster, this, criminal));
+                    creature.Aggressed.Add(AggressorInfo.Create(aggressiveMaster, this, criminal));
 
                     if (CanSee(aggressiveMaster) && NetState != null)
                     {
@@ -1760,7 +1737,7 @@ namespace Server.Mobiles
                     UpdateAggrExpire();
                 }
 
-                if (aggressiveMaster is PlayerMobile || (aggressiveMaster is BaseCreature && !((BaseCreature)aggressiveMaster).IsMonster))
+                if (aggressiveMaster is PlayerMobile || (aggressiveMaster is BaseCreature bc && !bc.IsMonster))
                 {
                     BuffInfo.AddBuff(this, new BuffInfo(BuffIcon.HeatOfBattleStatus, 1153801, 1153827, Aggression.CombatHeatDelay, this, true));
                     BuffInfo.AddBuff(aggressiveMaster, new BuffInfo(BuffIcon.HeatOfBattleStatus, 1153801, 1153827, Aggression.CombatHeatDelay, aggressiveMaster, true));
@@ -1774,9 +1751,9 @@ namespace Server.Mobiles
         {
             base.DoHarmful(damageable, indirect);
 
-            if (ViceVsVirtueSystem.Enabled && (ViceVsVirtueSystem.EnhancedRules || Map == ViceVsVirtueSystem.Facet) && damageable is Mobile)
+            if (ViceVsVirtueSystem.Enabled && (ViceVsVirtueSystem.EnhancedRules || Map == ViceVsVirtueSystem.Facet) && damageable is Mobile mobile)
             {
-                ViceVsVirtueSystem.CheckHarmful(this, (Mobile)damageable);
+                ViceVsVirtueSystem.CheckHarmful(this, mobile);
             }
         }
 
@@ -1794,12 +1771,12 @@ namespace Server.Mobiles
         {
             Mobile target = damageable as Mobile;
 
-            if (m_DesignContext != null || (target is PlayerMobile && ((PlayerMobile)target).m_DesignContext != null))
+            if (m_DesignContext != null || (target is PlayerMobile mobile && mobile.m_DesignContext != null))
             {
                 return false;
             }
 
-            if ((target is BaseVendor && ((BaseVendor)target).IsInvulnerable) || target is PlayerVendor || target is TownCrier)
+            if ((target is BaseVendor vendor && vendor.IsInvulnerable) || target is PlayerVendor || target is TownCrier)
             {
                 if (message)
                 {
@@ -1816,7 +1793,7 @@ namespace Server.Mobiles
                 return false;
             }
 
-            if (damageable is IDamageableItem && !((IDamageableItem)damageable).CanDamage)
+            if (damageable is IDamageableItem item && !item.CanDamage)
             {
                 if (message)
                     SendMessage("That cannot be harmed.");
@@ -1829,7 +1806,7 @@ namespace Server.Mobiles
 
         public override bool CanBeBeneficial(Mobile target, bool message, bool allowDead)
         {
-            if (m_DesignContext != null || (target is PlayerMobile && ((PlayerMobile)target).m_DesignContext != null))
+            if (m_DesignContext != null || target is PlayerMobile pm && pm.m_DesignContext != null)
             {
                 return false;
             }
@@ -1875,9 +1852,9 @@ namespace Server.Mobiles
                 Mana = Mana;
             }
 
-            if (item is BaseWeapon)
+            if (item is BaseWeapon weapon)
             {
-                m_LastWeapon = item as BaseWeapon;
+                m_LastWeapon = weapon;
             }
 
             if (NetState != null)
@@ -2506,7 +2483,7 @@ namespace Server.Mobiles
             int imbueWeight = Imbuing.GetTotalWeight(item, -1, false, false);
             int cost = 600; // this handles old items, set items, etc
 
-            if (item is IVvVItem && ((IVvVItem)item).IsVvVItem)
+            if (item is IVvVItem vItem && vItem.IsVvVItem)
                 cost = 800;
             else if (imbueWeight > 0)
                 cost = Math.Min(800, Math.Max(10, imbueWeight));
@@ -2653,10 +2630,10 @@ namespace Server.Mobiles
 
         private bool DisplayInItemInsuranceGump(Item item)
         {
-            if (item.Parent is LockableContainer && ((LockableContainer)item.Parent).Locked)
+            if (item.Parent is LockableContainer container && container.Locked)
                 return false;
 
-            return ((item.Visible || AccessLevel >= AccessLevel.GameMaster) && (item.Insured || CanInsure(item)));
+            return (item.Visible || AccessLevel >= AccessLevel.GameMaster) && (item.Insured || CanInsure(item));
         }
 
         private class ItemInsuranceMenuGump : Gump
@@ -3023,12 +3000,9 @@ namespace Server.Mobiles
 
             Region r = Region.Find(Location, Map);
 
-            if (r is Engines.ArenaSystem.ArenaRegion)
+            if (r is ArenaRegion region && !region.AllowItemEquip(this, item))
             {
-                if (!((Engines.ArenaSystem.ArenaRegion)r).AllowItemEquip(this, item))
-                {
-                    return false;
-                }
+                return false;
             }
 
             #region Vice Vs Virtue
@@ -3046,10 +3020,8 @@ namespace Server.Mobiles
 
                 if (bounce != null)
                 {
-                    if (bounce.m_Parent is Item)
+                    if (bounce.m_Parent is Item parent)
                     {
-                        Item parent = (Item)bounce.m_Parent;
-
                         if (parent == Backpack || parent.IsChildOf(Backpack))
                         {
                             return true;
@@ -3070,9 +3042,9 @@ namespace Server.Mobiles
 
         public override bool OnDragLift(Item item)
         {
-            if (item is IPromotionalToken && ((IPromotionalToken)item).GumpType != null)
+            if (item is IPromotionalToken token && token.GumpType != null)
             {
-                Type t = ((IPromotionalToken)item).GumpType;
+                Type t = token.GumpType;
 
                 if (HasGump(t))
                     CloseGump(t);
@@ -3105,7 +3077,7 @@ namespace Server.Mobiles
                 {
                     msgNum = 1062779; // That person is already involved in a trade
                 }
-                else if (to is PlayerMobile && ((PlayerMobile)to).RefuseTrades)
+                else if (to is PlayerMobile pm && pm.RefuseTrades)
                 {
                     msgNum = 1154111; // ~1_NAME~ is refusing all trades.
                 }
@@ -3160,7 +3132,7 @@ namespace Server.Mobiles
 
         private static int CheckContentForTrade(Item item)
         {
-            if (item is TrapableContainer && ((TrapableContainer)item).TrapType != TrapType.None)
+            if (item is TrapableContainer container && container.TrapType != TrapType.None)
             {
                 return 1004044; // You may not trade trapped items.
             }
@@ -3186,9 +3158,9 @@ namespace Server.Mobiles
             return 0;
         }
 
-        public override bool CheckNonlocalDrop(Mobile from, Item item, Item target)
+        public override bool CheckHasTradeDrop(Mobile from, Item item, Item target)
         {
-            if (!base.CheckNonlocalDrop(from, item, target))
+            if (!base.CheckHasTradeDrop(from, item, target))
             {
                 return false;
             }
@@ -3203,11 +3175,9 @@ namespace Server.Mobiles
             {
                 BounceInfo bounce = item.GetBounce();
 
-                if (bounce != null && bounce.m_Parent is Item)
+                if (bounce != null && bounce.m_Parent is Item pItem && pItem == pack)
                 {
-                    Item parent = (Item)bounce.m_Parent;
-
-                    if (parent == pack || parent.IsChildOf(pack))
+                    if (pItem.IsChildOf(pack))
                     {
                         return true;
                     }
@@ -3262,9 +3232,9 @@ namespace Server.Mobiles
 
         public override bool OnMoveOver(Mobile m)
         {
-            if (m is BaseCreature && !((BaseCreature)m).Controlled)
+            if (m is BaseCreature bc && !bc.Controlled)
             {
-                return (!Alive || !m.Alive || IsDeadBondedPet || m.IsDeadBondedPet) || (Hidden && IsStaff());
+                return (!Alive || !bc.Alive || IsDeadBondedPet || bc.IsDeadBondedPet) || (Hidden && IsStaff());
             }
 
             return base.OnMoveOver(m);
@@ -3333,7 +3303,7 @@ namespace Server.Mobiles
 
         public override bool IsBeneficialCriminal(Mobile target)
         {
-            if (!target.Criminal && target is BaseCreature && ((BaseCreature)target).GetMaster() == this)
+            if (!target.Criminal && target is BaseCreature bc && bc.GetMaster() == this)
                 return false;
 
             return base.IsBeneficialCriminal(target);
@@ -3378,9 +3348,9 @@ namespace Server.Mobiles
                 m_SentHonorContext.OnSourceDamaged(from, amount);
             }
 
-            if (willKill && from is PlayerMobile)
+            if (willKill && from is PlayerMobile pm)
             {
-                Timer.DelayCall(TimeSpan.FromSeconds(10), ((PlayerMobile)from).RecoverAmmo);
+                Timer.DelayCall(TimeSpan.FromSeconds(10), pm.RecoverAmmo);
             }
 
             #region Mondain's Legacy
@@ -3534,9 +3504,9 @@ namespace Server.Mobiles
             m_InsuranceCost = 0;
             m_InsuranceAward = FindMostRecentDamager(false);
 
-            if (m_InsuranceAward is BaseCreature)
+            if (m_InsuranceAward is BaseCreature bc)
             {
-                Mobile master = ((BaseCreature)m_InsuranceAward).GetMaster();
+                Mobile master = bc.GetMaster();
 
                 if (master != null)
                 {
@@ -3549,9 +3519,9 @@ namespace Server.Mobiles
                 m_InsuranceAward = null;
             }
 
-            if (m_InsuranceAward is PlayerMobile)
+            if (m_InsuranceAward is PlayerMobile pm)
             {
-                ((PlayerMobile)m_InsuranceAward).m_InsuranceBonus = 0;
+                pm.m_InsuranceBonus = 0;
             }
 
             if (m_ReceivedHonorContext != null)
@@ -3609,12 +3579,9 @@ namespace Server.Mobiles
 
                 if (m_InsuranceAward != null)
                 {
-                    if (Banker.Deposit(m_InsuranceAward, insuredAmount / 2))
+                    if (Banker.Deposit(m_InsuranceAward, insuredAmount / 2) && m_InsuranceAward is PlayerMobile pm)
                     {
-                        if (m_InsuranceAward is PlayerMobile)
-                        {
-                            ((PlayerMobile)m_InsuranceAward).m_InsuranceBonus += insuredAmount / 2;
-                        }
+                        pm.m_InsuranceBonus += insuredAmount / 2;
                     }
                 }
 
@@ -3660,7 +3627,7 @@ namespace Server.Mobiles
 
         public override void OnDeath(Container c)
         {
-            if (NetState != null /*&& NetState.IsEnhancedClient*/)
+            if (NetState != null)
             {
                 Waypoints.OnDeath(this);
             }
@@ -3668,9 +3635,9 @@ namespace Server.Mobiles
             Mobile m = FindMostRecentDamager(false);
             PlayerMobile killer = m as PlayerMobile;
 
-            if (killer == null && m is BaseCreature)
+            if (killer == null && m is BaseCreature bc)
             {
-                killer = ((BaseCreature)m).GetMaster() as PlayerMobile;
+                killer = bc.GetMaster() as PlayerMobile;
             }
 
             if (m_NonAutoreinsuredItems > 0)
@@ -3720,9 +3687,9 @@ namespace Server.Mobiles
             {
                 m_PermaFlags.Clear();
 
-                if (c is Corpse)
+                if (c is Corpse corpse)
                 {
-                    ((Corpse)c).Criminal = true;
+                    corpse.Criminal = true;
                 }
 
                 if (Stealing.ClassicMode)
@@ -3759,15 +3726,9 @@ namespace Server.Mobiles
                 }
             }
 
-            if (m_InsuranceAward is PlayerMobile)
+            if (m_InsuranceAward is PlayerMobile pm && pm.m_InsuranceBonus > 0)
             {
-                PlayerMobile pm = (PlayerMobile)m_InsuranceAward;
-
-                if (pm.m_InsuranceBonus > 0)
-                {
-                    pm.SendLocalizedMessage(1060397, pm.m_InsuranceBonus.ToString());
-                    // ~1_AMOUNT~ gold has been deposited into your bank box.
-                }
+                pm.SendLocalizedMessage(1060397, pm.m_InsuranceBonus.ToString()); // ~1_AMOUNT~ gold has been deposited into your bank box.
             }
 
             if (Young)
@@ -3811,7 +3772,6 @@ namespace Server.Mobiles
 
         private List<Mobile> m_PermaFlags;
         private readonly List<Mobile> m_VisList;
-        private readonly Hashtable m_AntiMacroTable;
         private TimeSpan m_GameTime;
         private TimeSpan m_ShortTermElapse;
         private TimeSpan m_LongTermElapse;
@@ -3960,7 +3920,6 @@ namespace Server.Mobiles
 
             m_VisList = new List<Mobile>();
             m_PermaFlags = new List<Mobile>();
-            m_AntiMacroTable = new Hashtable();
             m_RecentlyReported = new List<Mobile>();
 
             m_GameTime = TimeSpan.Zero;
@@ -4142,7 +4101,6 @@ namespace Server.Mobiles
             Instances.Add(this);
 
             m_VisList = new List<Mobile>();
-            m_AntiMacroTable = new Hashtable();
         }
 
         public List<Mobile> VisibilityList => m_VisList;
@@ -4165,77 +4123,34 @@ namespace Server.Mobiles
         {
             Mobile target = damageable as Mobile;
 
-            if (Stealing.ClassicMode && target is PlayerMobile && ((PlayerMobile)target).m_PermaFlags.Count > 0)
+            if (Stealing.ClassicMode && target is PlayerMobile pm && pm.m_PermaFlags.Count > 0)
             {
                 int noto = Notoriety.Compute(this, target);
 
                 if (noto == Notoriety.Innocent)
                 {
-                    target.Delta(MobileDelta.Noto);
+                    pm.Delta(MobileDelta.Noto);
                 }
 
                 return false;
             }
 
-            if (target is BaseCreature && ((BaseCreature)target).InitialInnocent && !((BaseCreature)target).Controlled)
+            if (target is BaseCreature bc && bc.InitialInnocent && !bc.Controlled)
             {
                 return false;
             }
 
-            if (target is BaseCreature && ((BaseCreature)target).Controlled && ((BaseCreature)target).ControlMaster == this)
+            if (target is BaseCreature creature && creature.Controlled && creature.ControlMaster == this)
             {
                 return false;
             }
 
-            if (target is BaseCreature && ((BaseCreature)target).Summoned && ((BaseCreature)target).SummonMaster == this)
+            if (target is BaseCreature baseCreature && baseCreature.Summoned && baseCreature.SummonMaster == this)
             {
                 return false;
             }
 
             return base.IsHarmfulCriminal(damageable);
-        }
-
-        public bool AntiMacroCheck(Skill skill, object obj)
-        {
-            if (obj == null || m_AntiMacroTable == null || IsStaff())
-            {
-                return true;
-            }
-
-            Hashtable tbl = (Hashtable)m_AntiMacroTable[skill];
-            if (tbl == null)
-            {
-                m_AntiMacroTable[skill] = tbl = new Hashtable();
-            }
-
-            CountAndTimeStamp count = (CountAndTimeStamp)tbl[obj];
-            if (count != null)
-            {
-                if (count.TimeStamp + SkillCheck.AntiMacroExpire <= DateTime.UtcNow)
-                {
-                    count.Count = 1;
-                    return true;
-                }
-                else
-                {
-                    ++count.Count;
-                    if (count.Count <= SkillCheck.Allowance)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-            else
-            {
-                tbl[obj] = count = new CountAndTimeStamp();
-                count.Count = 1;
-
-                return true;
-            }
         }
 
         public BOBFilter BOBFilter => BulkOrderSystem.GetBOBFilter(this);
@@ -4296,19 +4211,6 @@ namespace Server.Mobiles
                         m_SSSeedExpire = reader.ReadDateTime();
                         m_SSSeedLocation = reader.ReadPoint3D();
                         m_SSSeedMap = reader.ReadMap();
-
-                        if (version < 30)
-                        {
-                            reader.ReadLong(); // Old m_LevelExp
-                            int points = (int)reader.ReadLong();
-                            if (points > 0)
-                            {
-                                PointsSystem.QueensLoyalty.ConvertFromOldSystem(this, points);
-                            }
-
-                            reader.ReadInt(); // Old m_Level
-                            reader.ReadString(); // Old m_ExpTitle
-                        }
 
                         if (version < 40)
                         {
@@ -4433,7 +4335,7 @@ namespace Server.Mobiles
 
                         goto case 17;
                     }
-                case 17: // changed how DoneQuests is serialized
+                case 17: 
                 case 16:
                     {
                         m_Quest = QuestSerializer.DeserializeQuest(reader);
@@ -4460,14 +4362,7 @@ namespace Server.Mobiles
 
                                 DateTime restartTime;
 
-                                if (version < 17)
-                                {
-                                    restartTime = DateTime.MaxValue;
-                                }
-                                else
-                                {
-                                    restartTime = reader.ReadDateTime();
-                                }
+                                restartTime = reader.ReadDateTime();
 
                                 m_DoneQuests.Add(new QuestRestartInfo(questType, restartTime));
                             }
@@ -4492,7 +4387,7 @@ namespace Server.Mobiles
 
                         goto case 13;
                     }
-                case 13: // just removed m_PayedInsurance list
+                case 13: 
                 case 12:
                     {
                         if (version < 34)
@@ -4500,19 +4395,6 @@ namespace Server.Mobiles
                         goto case 11;
                     }
                 case 11:
-                    {
-                        if (version < 13)
-                        {
-                            List<Item> payed = reader.ReadStrongItemList();
-
-                            for (int i = 0; i < payed.Count; ++i)
-                            {
-                                payed[i].PayedInsurance = true;
-                            }
-                        }
-
-                        goto case 10;
-                    }
                 case 10:
                     {
                         if (reader.ReadBool())
@@ -4549,18 +4431,8 @@ namespace Server.Mobiles
                         m_PermaFlags = reader.ReadStrongMobileList();
                         goto case 6;
                     }
-                case 6:
-                    {
-                        if (version < 34)
-                            reader.ReadTimeSpan();
-                        goto case 5;
-                    }
-                case 5:
-                    {
-                        if (version < 34)
-                            reader.ReadTimeSpan();
-                        goto case 4;
-                    }
+                case 6:                   
+                case 5:                   
                 case 4:
                     {
                         m_LastJusticeLoss = reader.ReadDeltaTime();
@@ -4587,19 +4459,9 @@ namespace Server.Mobiles
                         goto case 0;
                     }
                 case 0:
-                    {
-                        if (version < 26)
-                        {
-                            m_AutoStabled = new List<Mobile>();
-                        }
+                    {                      
                         break;
                     }
-            }
-
-            if (version < 29)
-            {
-                m_SSNextSeed = m_SSSeedExpire = DateTime.UtcNow;
-                m_SSSeedLocation = Point3D.Zero;
             }
 
             if (m_RecentlyReported == null)
@@ -4693,29 +4555,10 @@ namespace Server.Mobiles
 
         public override void Serialize(GenericWriter writer)
         {
-            //cleanup our anti-macro table
-            foreach (Hashtable t in m_AntiMacroTable.Values)
-            {
-                ArrayList remove = new ArrayList();
-                foreach (CountAndTimeStamp time in t.Values)
-                {
-                    if (time.TimeStamp + SkillCheck.AntiMacroExpire <= DateTime.UtcNow)
-                    {
-                        remove.Add(time);
-                    }
-                }
-
-                for (int i = 0; i < remove.Count; ++i)
-                {
-                    t.Remove(remove[i]);
-                }
-            }
-
             CheckKillDecay();
             CheckAtrophies(this);
 
             base.Serialize(writer);
-
             writer.Write(42); // version
 
             writer.Write(NextGemOfSalvationUse);
@@ -4889,9 +4732,9 @@ namespace Server.Mobiles
             CompassionVirtue.CheckAtrophy(m);
             ValorVirtue.CheckAtrophy(m);
 
-            if (m is PlayerMobile)
+            if (m is PlayerMobile pm)
             {
-                ChampionTitleInfo.CheckAtrophy((PlayerMobile)m);
+                ChampionTitleInfo.CheckAtrophy(pm);
             }
         }
 
@@ -4946,12 +4789,12 @@ namespace Server.Mobiles
             if (m is IConditionalVisibility && !((IConditionalVisibility)m).CanBeSeenBy(this))
                 return false;
 
-            if (m is CharacterStatue)
+            if (m is CharacterStatue statue)
             {
-                ((CharacterStatue)m).OnRequestedAnimation(this);
+                statue.OnRequestedAnimation(this);
             }
 
-            if (m is PlayerMobile && ((PlayerMobile)m).m_VisList.Contains(this))
+            if (m is PlayerMobile pm && pm.m_VisList.Contains(this))
             {
                 return true;
             }
@@ -4961,7 +4804,7 @@ namespace Server.Mobiles
 
         public override bool CanSee(Item item)
         {
-            if (item is IConditionalVisibility && !((IConditionalVisibility)item).CanBeSeenBy(this))
+            if (item is IConditionalVisibility vis && !vis.CanBeSeenBy(this))
                 return false;
 
             if (m_DesignContext != null && m_DesignContext.Foundation.IsHiddenToCustomizer(this, item))
@@ -4972,7 +4815,7 @@ namespace Server.Mobiles
             {
                 Region r = item.GetRegion();
 
-                if (r is BaseRegion && !((BaseRegion)r).CanSee(this, item))
+                if (r is BaseRegion region && !region.CanSee(this, item))
                 {
                     return false;
                 }
@@ -5741,7 +5584,7 @@ namespace Server.Mobiles
                 return false;
             }
 
-            if (from is BaseCreature && ((BaseCreature)from).IgnoreYoungProtection)
+            if (from is BaseCreature creature && creature.IgnoreYoungProtection)
             {
                 return false;
             }

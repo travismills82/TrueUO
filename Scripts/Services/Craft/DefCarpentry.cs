@@ -41,7 +41,7 @@ namespace Server.Engines.Craft
         LargeElegantAquarium = 155,
 
         KotlBlackRod = 170,
-        KotlAutomaton = 171,
+        KotlAutomaton = 171
     }
     #endregion
 
@@ -82,13 +82,14 @@ namespace Server.Engines.Craft
 
             if (tool == null || tool.Deleted || tool.UsesRemaining <= 0)
                 return 1044038; // You have worn out your tool!
-            else if (!tool.CheckAccessible(from, ref num))
+
+            if (!tool.CheckAccessible(from, ref num))
                 return num; // The tool must be on your person to use.
 
             return 0;
         }
 
-        private readonly Type[] _RetainsColor = new[]
+        private readonly Type[] _RetainsColor =
         {
             typeof(BasePlayerBB)
         };
@@ -118,21 +119,25 @@ namespace Server.Engines.Craft
             if (failed)
             {
                 if (lostMaterial)
+                {
                     return 1044043; // You failed to create the item, and some of your materials are lost.
-                else
-                    return 1044157; // You failed to create the item, but no materials were lost.
+                }
+
+                return 1044157; // You failed to create the item, but no materials were lost.
             }
-            else
+
+            if (quality == 0)
+                return 502785; // You were barely able to make this item.  It's quality is below average.
+
+            if (makersMark && quality == 2)
+                return 1044156; // You create an exceptional quality item and affix your maker's mark.
+
+            if (quality == 2)
             {
-                if (quality == 0)
-                    return 502785; // You were barely able to make this item.  It's quality is below average.
-                else if (makersMark && quality == 2)
-                    return 1044156; // You create an exceptional quality item and affix your maker's mark.
-                else if (quality == 2)
-                    return 1044155; // You create an exceptional quality item.
-                else
-                    return 1044154; // You create the item.
+                return 1044155; // You create an exceptional quality item.
             }
+
+            return 1044154; // You create the item.
         }
 
         public override void InitCraftList()
@@ -736,18 +741,21 @@ namespace Server.Engines.Craft
             AddRes(index, typeof(WorkableGlass), 1154170, 2, 1154171);
             AddRes(index, typeof(Sand), 1044625, 5, 1044627);
             AddRes(index, typeof(LiveRock), 1159133, 1, 1159132);
+            ForceNonExceptional(index);
             AddRecipe(index, (int)CarpRecipes.SmallElegantAquarium);
 
             index = AddCraft(typeof(WallMountedAquariumDeed), 1044290, 1159135, 100.0, 160.0, typeof(Board), 1044041, 50, 1044351);
             AddRes(index, typeof(WorkableGlass), 1154170, 4, 1154171);
             AddRes(index, typeof(Sand), 1044625, 10, 1044627);
             AddRes(index, typeof(LiveRock), 1159133, 3, 1159132);
+            ForceNonExceptional(index);
             AddRecipe(index, (int)CarpRecipes.WallMountedAquarium);
 
             index = AddCraft(typeof(LargeElegantAquariumDeed), 1044290, 1159136, 100.0, 160.0, typeof(Board), 1044041, 100, 1044351);
             AddRes(index, typeof(WorkableGlass), 1154170, 8, 1154171);
             AddRes(index, typeof(Sand), 1044625, 20, 1044627);
             AddRes(index, typeof(LiveRock), 1159133, 5, 1159132);
+            ForceNonExceptional(index);
             AddRecipe(index, (int)CarpRecipes.LargeElegantAquarium);
 
             // Tailoring and Cooking

@@ -24,17 +24,16 @@ namespace Server.Items
         {
             if (m is PlayerMobile)
             {
-                if (FellowshipMedallion.IsDressed(m))
+                var neck = m.FindItemOnLayer(Layer.Neck);
+
+                if (neck != null && neck.Hue == 1151 && (neck is FellowshipMedallion || neck is GargishFellowshipMedallion))
                 {
                     BaseCreature.TeleportPets(m, m_Dest, Map.Ilshenar);
                     m.MoveToWorld(m_Dest, Map.Ilshenar);
                     return false;
                 }
-                else
-                {
-                    m.PrivateOverheadMessage(MessageType.Regular, 0x47E, 1159385,
-                        m.NetState); // * Your connection to the ethereal void is not honed, you cannot pass... *
-                }
+
+                m.PrivateOverheadMessage(MessageType.Regular, 0x47E, 1159385, m.NetState); // * Your connection to the ethereal void is not honed, you cannot pass... *
             }
 
             return true;

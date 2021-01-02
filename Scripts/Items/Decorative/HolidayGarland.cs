@@ -1,17 +1,17 @@
 namespace Server.Items
 {
-    public class LuteTunedToStones : BaseInstrument
+    [Flipable(0x3BBB, 0x3BBC)]
+    public class HolidayGarland : Item
     {
-        public override int LabelNumber => 1159413;  // A Lute Tuned to Stones
+        public override int LabelNumber => 1095239; // a holiday garland
 
         [Constructable]
-        public LuteTunedToStones()
-            : base(0xEB3, 0x682, 0x4D)
+        public HolidayGarland()
+            : base(0x3BBB)
         {
-            Weight = 5.0;
         }
 
-        public LuteTunedToStones(Serial serial)
+        public HolidayGarland(Serial serial)
             : base(serial)
         {
         }
@@ -19,7 +19,7 @@ namespace Server.Items
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-            writer.Write(0); // version
+            writer.Write(0);
         }
 
         public override void Deserialize(GenericReader reader)
