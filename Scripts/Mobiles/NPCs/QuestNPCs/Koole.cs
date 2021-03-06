@@ -7,7 +7,6 @@ namespace Server.Engines.Quests
     public class TroubleOnTheWingQuest : BaseQuest
     {
         public TroubleOnTheWingQuest()
-            : base()
         {
             AddObjective(new SlayObjective(typeof(Gargoyle), "gargoyles", 12, "Sanctuary"));
 
@@ -23,23 +22,17 @@ namespace Server.Engines.Quests
         public override object Refuse => 1072594;
         /* Those blasted gargoyles hang around the old tower.  That's the best place to hunt them down. */
         public override object Uncomplete => 1072595;
-        public override bool CanOffer()
-        {
-            return MondainsLegacy.Sanctuary;
-        }
-
+        
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
@@ -56,12 +49,13 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests => new Type[]
-                {
-                    typeof(TroubleOnTheWingQuest),
-                    typeof(MaraudersQuest),
-                    typeof(DisciplineQuest)
-                };
+        public override Type[] Quests => new[]
+        {
+            typeof(TroubleOnTheWingQuest),
+            typeof(MaraudersQuest),
+            typeof(DisciplineQuest)
+        };
+
         public override void InitBody()
         {
             InitStats(100, 100, 25);
@@ -98,15 +92,13 @@ namespace Server.Engines.Quests
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 }

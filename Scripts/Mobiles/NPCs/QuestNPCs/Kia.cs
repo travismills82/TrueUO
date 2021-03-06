@@ -6,7 +6,6 @@ namespace Server.Engines.Quests
     public class MomentoQuest : BaseQuest
     {
         public MomentoQuest()
-            : base()
         {
             AddObjective(new ObtainObjective(typeof(ResolvesBridle), "resolve's bridle", 1, 0x1727));
 
@@ -26,23 +25,17 @@ namespace Server.Engines.Quests
         public override object Uncomplete => 1074753;
         /* I'd know that jingling sound anywhere!  You have recovered my bridle.  Thank you. */
         public override object Complete => 1074754;
-        public override bool CanOffer()
-        {
-            return MondainsLegacy.Bedlam;
-        }
-
+        
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
@@ -59,10 +52,8 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests => new Type[]
-                {
-                    typeof(MomentoQuest)
-                };
+        public override Type[] Quests => new[] { typeof(MomentoQuest) };
+
         public override void InitBody()
         {
             InitStats(100, 100, 25);
@@ -85,15 +76,13 @@ namespace Server.Engines.Quests
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 }

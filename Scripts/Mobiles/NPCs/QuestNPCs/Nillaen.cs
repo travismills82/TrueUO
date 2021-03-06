@@ -7,7 +7,6 @@ namespace Server.Engines.Quests
     public class ParoxysmusSuccubiQuest : BaseQuest
     {
         public ParoxysmusSuccubiQuest()
-            : base()
         {
             AddObjective(new SlayObjective(typeof(Succubus), "succubi", 3, "Palace of Paroxysmus"));
 
@@ -23,30 +22,23 @@ namespace Server.Engines.Quests
         public override object Refuse => 1072270;
         /* You're not quite done yet.  Get back to work! */
         public override object Uncomplete => 1072271;
-        public override bool CanOffer()
-        {
-            return MondainsLegacy.PalaceOfParoxysmus;
-        }
-
+        
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
     public class ParoxysmusMolochQuest : BaseQuest
     {
         public ParoxysmusMolochQuest()
-            : base()
         {
             AddObjective(new SlayObjective(typeof(Moloch), "molochs", 3, "Palace of Paroxysmus"));
 
@@ -62,30 +54,23 @@ namespace Server.Engines.Quests
         public override object Refuse => 1072270;
         /* You're not quite done yet.  Get back to work! */
         public override object Uncomplete => 1072271;
-        public override bool CanOffer()
-        {
-            return MondainsLegacy.PalaceOfParoxysmus;
-        }
-
+        
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
     public class ParoxysmusDaemonsQuest : BaseQuest
     {
         public ParoxysmusDaemonsQuest()
-            : base()
         {
             AddObjective(new SlayObjective(typeof(Daemon), "daemons", 10, "Palace of Paroxysmus"));
 
@@ -101,30 +86,23 @@ namespace Server.Engines.Quests
         public override object Refuse => 1072270;
         /* You're not quite done yet.  Get back to work! */
         public override object Uncomplete => 1072271;
-        public override bool CanOffer()
-        {
-            return MondainsLegacy.PalaceOfParoxysmus;
-        }
-
+        
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
     public class ParoxysmusArcaneDaemonsQuest : BaseQuest
     {
         public ParoxysmusArcaneDaemonsQuest()
-            : base()
         {
             AddObjective(new SlayObjective(typeof(ArcaneDaemon), "arcane daemons", 10, "Palace of Paroxysmus"));
 
@@ -140,30 +118,23 @@ namespace Server.Engines.Quests
         public override object Refuse => 1072270;
         /* You're not quite done yet.  Get back to work! */
         public override object Uncomplete => 1072271;
-        public override bool CanOffer()
-        {
-            return MondainsLegacy.PalaceOfParoxysmus;
-        }
-
+        
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
     public class CausticComboQuest : BaseQuest
     {
         public CausticComboQuest()
-            : base()
         {
             AddObjective(new SlayObjective(typeof(PoisonElemental), "poison elementals", 3, "Palace of Paroxysmus"));
             AddObjective(new SlayObjective(typeof(ToxicElemental), "acid elementals", 6, "Palace of Paroxysmus"));
@@ -181,30 +152,23 @@ namespace Server.Engines.Quests
         public override object Refuse => 1072270;
         /* You're not quite done yet.  Get back to work! */
         public override object Uncomplete => 1072271;
-        public override bool CanOffer()
-        {
-            return MondainsLegacy.PalaceOfParoxysmus;
-        }
-
+        
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
     public class PlagueLordQuest : BaseQuest
     {
         public PlagueLordQuest()
-            : base()
         {
             AddObjective(new SlayObjective(typeof(PlagueSpawn), "plague spawns", 10, "Palace of Paroxysmus"));
             AddObjective(new SlayObjective(typeof(PlagueBeast), "plague beasts", 3, "Palace of Paroxysmus"));
@@ -223,23 +187,17 @@ namespace Server.Engines.Quests
         public override object Refuse => 1072270;
         /* You're not quite done yet.  Get back to work! */
         public override object Uncomplete => 1072271;
-        public override bool CanOffer()
-        {
-            return MondainsLegacy.PalaceOfParoxysmus;
-        }
-
+        
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
@@ -258,15 +216,16 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests => new Type[]
-                {
-                    typeof(ParoxysmusSuccubiQuest),
-                    typeof(ParoxysmusMolochQuest),
-                    typeof(ParoxysmusDaemonsQuest),
-                    typeof(ParoxysmusArcaneDaemonsQuest),
-                    typeof(CausticComboQuest),
-                    typeof(PlagueLordQuest)
-                };
+        public override Type[] Quests => new[]
+        {
+            typeof(ParoxysmusSuccubiQuest),
+            typeof(ParoxysmusMolochQuest),
+            typeof(ParoxysmusDaemonsQuest),
+            typeof(ParoxysmusArcaneDaemonsQuest),
+            typeof(CausticComboQuest),
+            typeof(PlagueLordQuest)
+        };
+
         public override void InitBody()
         {
             InitStats(100, 100, 25);
@@ -292,15 +251,13 @@ namespace Server.Engines.Quests
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 }

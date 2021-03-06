@@ -7,7 +7,6 @@ namespace Server.Engines.Quests
     public class GuileIrkAndSpiteQuest : BaseQuest
     {
         public GuileIrkAndSpiteQuest()
-            : base()
         {
             AddObjective(new SlayObjective(typeof(Guile), "guile", 1));
             AddObjective(new SlayObjective(typeof(Irk), "irk", 1));
@@ -28,23 +27,17 @@ namespace Server.Engines.Quests
         public override object Uncomplete => 1074746;
         /* Are you one of THEM?  Ahhhh!  Oh, wait, if you were them, then you'd be me.  So you're -- you.  Good job! */
         public override object Complete => 1074747;
-        public override bool CanOffer()
-        {
-            return MondainsLegacy.TwistedWeald;
-        }
-
+        
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
@@ -61,20 +54,21 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests => new Type[]
-                {
-                    typeof(BullfightingSortOfQuest),
-                    typeof(ForcedMigrationQuest),
-                    typeof(FineFeastQuest),
-                    typeof(OverpopulationQuest),
-                    typeof(HeroInTheMakingQuest),
-                    typeof(ThinningTheHerdQuest),
-                    typeof(TheyllEatAnythingQuest),
-                    typeof(NoGoodFishStealingQuest),
-                    typeof(WildBoarCullQuest),
-                    typeof(TheyreBreedingLikeRabbitsQuest),
-                    typeof(GuileIrkAndSpiteQuest)
-                };
+        public override Type[] Quests => new[]
+        {
+            typeof(BullfightingSortOfQuest),
+            typeof(ForcedMigrationQuest),
+            typeof(FineFeastQuest),
+            typeof(OverpopulationQuest),
+            typeof(HeroInTheMakingQuest),
+            typeof(ThinningTheHerdQuest),
+            typeof(TheyllEatAnythingQuest),
+            typeof(NoGoodFishStealingQuest),
+            typeof(WildBoarCullQuest),
+            typeof(TheyreBreedingLikeRabbitsQuest),
+            typeof(GuileIrkAndSpiteQuest)
+        };
+
         public override void InitBody()
         {
             InitStats(100, 100, 25);
@@ -97,15 +91,13 @@ namespace Server.Engines.Quests
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 }

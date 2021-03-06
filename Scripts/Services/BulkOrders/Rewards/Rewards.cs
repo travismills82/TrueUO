@@ -1427,10 +1427,10 @@ namespace Server.Engines.BulkOrders
             RewardCollection = new List<CollectionItem>();
 
             RewardCollection.Add(new BODCollectionItem(0x97F, 1157219, 0, 10, Skillet));
-            RewardCollection.Add(new BODCollectionItem(0x14F0, 1157197, 0, 25, RewardTitle, 13));
+            RewardCollection.Add(new BODCollectionItem(0x14F0, 1157197, 0, 25, RewardTitle, 16));
             RewardCollection.Add(new BODCollectionItem(0x2831, 1031233, 0, 25, Recipe, 4));
-            RewardCollection.Add(new BODCollectionItem(0x14F0, 1157198, 0, 50, RewardTitle, 14));
-            RewardCollection.Add(new BODCollectionItem(0x14F0, 1157199, 0, 210, RewardTitle, 15));
+            RewardCollection.Add(new BODCollectionItem(0x14F0, 1157198, 0, 50, RewardTitle, 17));
+            RewardCollection.Add(new BODCollectionItem(0x14F0, 1157199, 0, 210, RewardTitle, 18));
             RewardCollection.Add(new BODCollectionItem(0x9E27, 1157264, 0, 250, CraftsmanTalisman, 10));
             RewardCollection.Add(new BODCollectionItem(0x9E27, 1157218, 0, 300, CraftsmanTalisman, 25));
             RewardCollection.Add(new BODCollectionItem(0x9E27, 1157265, 0, 350, CraftsmanTalisman, 50));
@@ -1563,7 +1563,7 @@ namespace Server.Engines.BulkOrders
             RewardCollection = new List<CollectionItem>();
 
             RewardCollection.Add(new BODCollectionItem(0x1022, 1157219, 0, 10, FletcherTools));
-            RewardCollection.Add(new BODCollectionItem(0x14F0, 1157200, 0, 25, RewardTitle, 17));
+            RewardCollection.Add(new BODCollectionItem(0x14F0, 1157200, 0, 25, RewardTitle, 19));
             RewardCollection.Add(new BODCollectionItem(0x9E29, 1157264, 0, 210, CraftsmanTalisman, 10));
             RewardCollection.Add(new BODCollectionItem(0x2F5A, 1152678, CraftResources.GetHue(CraftResource.YewWood), 225, WoodsmansTalisman, (int)CraftResource.YewWood));
             RewardCollection.Add(new BODCollectionItem(0x14EC, 1152669, CraftResources.GetHue(CraftResource.YewWood), 310, HarvestMap, (int)CraftResource.YewWood));

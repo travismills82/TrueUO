@@ -6,7 +6,6 @@ namespace Server.Engines.Quests
     public class ImpressivePlaidQuest : BaseQuest
     {
         public ImpressivePlaidQuest()
-            : base()
         {
             AddObjective(new ObtainObjective(typeof(Kilt), "kilts", 10, 0x1537));
 
@@ -24,25 +23,23 @@ namespace Server.Engines.Quests
         public override object Uncomplete => 1074064;
         /* These human made goods are laughable! It offends so -- I must show you what elven skill is capable of! */
         public override object Complete => 1074065;
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
     public class NiceShirtQuest : BaseQuest
     {
         public NiceShirtQuest()
-            : base()
         {
             AddObjective(new ObtainObjective(typeof(FancyShirt), "fancy shirt", 10, 0x1EFD));
 
@@ -60,25 +57,23 @@ namespace Server.Engines.Quests
         public override object Uncomplete => 1074064;
         /* These human made goods are laughable! It offends so -- I must show you what elven skill is capable of! */
         public override object Complete => 1074065;
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
     public class LeatherAndLaceQuest : BaseQuest
     {
         public LeatherAndLaceQuest()
-            : base()
         {
             AddObjective(new ObtainObjective(typeof(StuddedBustierArms), "studded bustiers", 10, 0x1C0C));
 
@@ -96,25 +91,23 @@ namespace Server.Engines.Quests
         public override object Uncomplete => 1074064;
         /* These human made goods are laughable! It offends so -- I must show you what elven skill is capable of! */
         public override object Complete => 1074065;
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
     public class FeyHeadgearQuest : BaseQuest
     {
         public FeyHeadgearQuest()
-            : base()
         {
             AddObjective(new ObtainObjective(typeof(FlowerGarland), "flower garlands", 10, 0x2306));
 
@@ -132,25 +125,23 @@ namespace Server.Engines.Quests
         public override object Uncomplete => 1074064;
         /* These human made goods are laughable! It offends so -- I must show you what elven skill is capable of! */
         public override object Complete => 1074065;
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
     public class NewCloakQuest : BaseQuest
     {
         public NewCloakQuest()
-            : base()
         {
             AddObjective(new ObtainObjective(typeof(GrobusFur), "grobu's fur", 1));
 
@@ -169,23 +160,17 @@ namespace Server.Engines.Quests
         public override object Uncomplete => 1074686;
         /* Ah! So soft, so supple.  What a wonderful texture.  Here you are ... my thanks. */
         public override object Complete => 1074687;
-        public override bool CanOffer()
-        {
-            return MondainsLegacy.PaintedCaves;
-        }
 
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
@@ -202,15 +187,16 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests => new Type[]
-                {
-                    typeof(ImpressivePlaidQuest),
-                    typeof(NiceShirtQuest),
-                    typeof(LeatherAndLaceQuest),
-                    typeof(FeyHeadgearQuest),
-                    typeof(ScaleArmorQuest),
-                    typeof(NewCloakQuest)
-                };
+        public override Type[] Quests => new[]
+        {
+            typeof(ImpressivePlaidQuest),
+            typeof(NiceShirtQuest),
+            typeof(LeatherAndLaceQuest),
+            typeof(FeyHeadgearQuest),
+            typeof(ScaleArmorQuest),
+            typeof(NewCloakQuest)
+        };
+
         public override void InitBody()
         {
             InitStats(100, 100, 25);
@@ -234,15 +220,13 @@ namespace Server.Engines.Quests
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 }

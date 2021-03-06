@@ -362,26 +362,32 @@ namespace Server.Engines.VvV
 
         public void SendVvVMessage(string message)
         {
-            foreach (NetState state in NetState.Instances.Where(st => st.Mobile != null && IsVvV(st.Mobile)))
+            foreach (NetState state in NetState.Instances)
             {
-                Mobile m = state.Mobile;
-
-                if (m != null)
+                if (state.Mobile != null && IsVvV(state.Mobile))
                 {
-                    m.SendMessage("[Guild][VvV] {0}", message);
+                    Mobile m = state.Mobile;
+
+                    if (m != null)
+                    {
+                        m.SendMessage("[Guild][VvV] {0}", message);
+                    }
                 }
             }
         }
 
         public void SendVvVMessage(int cliloc, string args = "")
         {
-            foreach (NetState state in NetState.Instances.Where(st => st.Mobile != null && IsVvV(st.Mobile)))
+            foreach (NetState state in NetState.Instances)
             {
-                Mobile m = state.Mobile;
-
-                if (m != null)
+                if (state.Mobile != null && IsVvV(state.Mobile))
                 {
-                    SendVvVMessageTo(m, cliloc, args);
+                    Mobile m = state.Mobile;
+
+                    if (m != null)
+                    {
+                        SendVvVMessageTo(m, cliloc, args);
+                    }
                 }
             }
         }
@@ -685,13 +691,16 @@ namespace Server.Engines.VvV
 
         public static TemporaryCombatant GetTempCombatant(Mobile from, Mobile to)
         {
-            foreach (TemporaryCombatant combatant in TempCombatants.Where(c => c.From == from))
+            foreach (TemporaryCombatant combatant in TempCombatants)
             {
-                if (combatant.Friendly == null && to == null)
-                    return combatant;
+                if (combatant.From == from)
+                {
+                    if (combatant.Friendly == null && to == null)
+                        return combatant;
 
-                if (combatant.Friendly == to || combatant.FriendlyGuild != null && combatant.FriendlyGuild == from.Guild as Guild)
-                    return combatant;
+                    if (combatant.Friendly == to || combatant.FriendlyGuild != null && combatant.FriendlyGuild == from.Guild as Guild)
+                        return combatant;
+                }
             }
 
             return null;
@@ -915,18 +924,21 @@ namespace Server.Engines.VvV
 
         public void FixVvVItems()
         {
-            foreach (Item item in VvVItems.Where(i => i is Spellbook))
+            foreach (Item item in VvVItems)
             {
-                Spellbook book = item as Spellbook;
-                NegativeAttributes attrs = RunicReforging.GetNegativeAttributes(item);
-
-                if (attrs != null)
+                if (item is Spellbook)
                 {
-                    attrs.Antique = 0;
-                }
+                    Spellbook book = item as Spellbook;
+                    NegativeAttributes attrs = RunicReforging.GetNegativeAttributes(item);
 
-                book.MaxHitPoints = 0;
-                book.HitPoints = 0;
+                    if (attrs != null)
+                    {
+                        attrs.Antique = 0;
+                    }
+
+                    book.MaxHitPoints = 0;
+                    book.HitPoints = 0;
+                }
             }
         }
 

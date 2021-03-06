@@ -29,13 +29,14 @@ namespace Server.Engines.VendorSearching
             List<SearchItem> list = new List<SearchItem>();
             bool excludefel = criteria.Details.FirstOrDefault(d => d.Attribute is Misc misc && misc == Misc.ExcludeFel) != null;
 
-            foreach (Auction.Auction pv in Auction.Auction.Auctions.Where(pv => pv.AuctionItem != null &&
-                                                                                pv.AuctionItem.Map != Map.Internal &&
-                                                                               pv.AuctionItem.Map != null &&
-                                                                               pv.OnGoing &&
-                                                                               (!excludefel || pv.AuctionItem.Map != Map.Felucca)))
+            foreach (Auction.Auction pv in Auction.Auction.Auctions)
             {
-                list.Add(new SearchItem(pv.Safe, pv.AuctionItem, (int)pv.Buyout, false));
+                if (pv.AuctionItem != null && pv.AuctionItem.Map != Map.Internal && pv.AuctionItem.Map != null && pv.OnGoing && (!excludefel || pv.AuctionItem.Map != Map.Felucca))
+                {
+                    {
+                        list.Add(new SearchItem(pv.Safe, pv.AuctionItem, (int) pv.Buyout, false));
+                    }
+                }
             }
 
             switch (criteria.SortBy)
@@ -55,43 +56,41 @@ namespace Server.Engines.VendorSearching
             List<SearchItem> list = new List<SearchItem>();
             bool excludefel = criteria.Details.FirstOrDefault(d => d.Attribute is Misc misc && misc == Misc.ExcludeFel) != null;
 
-            foreach (PlayerVendor pv in PlayerVendor.PlayerVendors.Where(pv => pv.Map != Map.Internal &&
-                                                                               pv.Map != null &&
-                                                                               pv.Backpack != null &&
-                                                                               pv.VendorSearch &&
-                                                                               pv.Backpack.Items.Count > 0 &&
-                                                                               (!excludefel || pv.Map != Map.Felucca)))
+            foreach (PlayerVendor pv in PlayerVendor.PlayerVendors)
             {
-                List<Item> items = GetItems(pv);
-
-                foreach (Item item in items)
+                if (pv.Map != Map.Internal && pv.Map != null && pv.Backpack != null && pv.VendorSearch && pv.Backpack.Items.Count > 0 && (!excludefel || pv.Map != Map.Felucca))
                 {
-                    VendorItem vendorItem = pv.GetVendorItem(item);
-                    int price = 0;
-                    bool isChild = false;
+                    List<Item> items = GetItems(pv);
 
-                    if (vendorItem != null)
+                    foreach (Item item in items)
                     {
-                        price = vendorItem.Price;
-                    }
-                    else if (item.Parent is Container parent)
-                    {
-                        vendorItem = GetParentVendorItem(pv, parent);
+                        VendorItem vendorItem = pv.GetVendorItem(item);
+                        int price = 0;
+                        bool isChild = false;
 
                         if (vendorItem != null)
                         {
-                            isChild = true;
                             price = vendorItem.Price;
+                        }
+                        else if (item.Parent is Container parent)
+                        {
+                            vendorItem = GetParentVendorItem(pv, parent);
+
+                            if (vendorItem != null)
+                            {
+                                isChild = true;
+                                price = vendorItem.Price;
+                            }
+                        }
+
+                        if (price > 0 && CheckMatch(item, price, criteria))
+                        {
+                            list.Add(new SearchItem(pv, item, price, isChild));
                         }
                     }
 
-                    if (price > 0 && CheckMatch(item, price, criteria))
-                    {
-                        list.Add(new SearchItem(pv, item, price, isChild));
-                    }
+                    ColUtility.Free(items);
                 }
-
-                ColUtility.Free(items);
             }
 
             switch (criteria.SortBy)
@@ -535,10 +534,13 @@ namespace Server.Engines.VendorSearching
 
                     if (Contexts != null)
                     {
-                        foreach (KeyValuePair<PlayerMobile, SearchCriteria> kvp in Contexts.Where(kvp => !kvp.Value.IsEmpty))
+                        foreach (KeyValuePair<PlayerMobile, SearchCriteria> kvp in Contexts)
                         {
-                            writer.Write(kvp.Key);
-                            kvp.Value.Serialize(writer);
+                            if (!kvp.Value.IsEmpty)
+                            {
+                                writer.Write(kvp.Key);
+                                kvp.Value.Serialize(writer);
+                            }
                         }
                     }
                 });

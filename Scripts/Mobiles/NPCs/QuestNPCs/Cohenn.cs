@@ -6,7 +6,6 @@ namespace Server.Engines.Quests
     public class MisplacedQuest : BaseQuest
     {
         public MisplacedQuest()
-            : base()
         {
             AddObjective(new ObtainObjective(typeof(DisintegratingThesisNotes), "disintegrating thesis notes", 5, 0xEF5));
 
@@ -27,23 +26,17 @@ namespace Server.Engines.Quests
         /* Ah!  You've got my pages?  Oh no ... they've been damaged.  Here, take this key.  Perhaps you can find the podium 
         and gain access to the library.  My poor books are being ravaged by that horror and you'd do well to put things right. */
         public override object Complete => 1074443;
-        public override bool CanOffer()
-        {
-            return MondainsLegacy.Bedlam;
-        }
-
+        
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
@@ -60,10 +53,8 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests => new Type[]
-                {
-                    typeof(MisplacedQuest)
-                };
+        public override Type[] Quests => new[] { typeof(MisplacedQuest) };
+
         public override void InitBody()
         {
             InitStats(100, 100, 25);
@@ -86,15 +77,13 @@ namespace Server.Engines.Quests
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 }

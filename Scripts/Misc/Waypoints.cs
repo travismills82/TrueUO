@@ -92,9 +92,12 @@ namespace Server
             if (m == null || oldMap == null)
                 return;
 
-            foreach (BaseVendor vendor in BaseVendor.AllVendors.Where(q => q is MondainQuester && !q.Deleted && q.Map == oldMap))
+            foreach (BaseVendor vendor in BaseVendor.AllVendors)
             {
-                ns.Send(new RemoveWaypoint(vendor.Serial));
+                if (vendor is MondainQuester && !vendor.Deleted && vendor.Map == oldMap)
+                {
+                    ns.Send(new RemoveWaypoint(vendor.Serial));
+                }
             }
         }
 
@@ -103,9 +106,12 @@ namespace Server
             if (m == null || m.Map == null || m.Deleted)
                 return;
 
-            foreach (BaseVendor vendor in BaseVendor.AllVendors.Where(q => q is MondainQuester && !q.Deleted && q.Map == m.Map))
+            foreach (BaseVendor vendor in BaseVendor.AllVendors)
             {
-                Create(m, vendor, WaypointType.QuestGiver);
+                if (vendor is MondainQuester && !vendor.Deleted && vendor.Map == m.Map)
+                {
+                    Create(m, vendor, WaypointType.QuestGiver);
+                }
             }
         }
 
@@ -114,9 +120,12 @@ namespace Server
             if (m == null || m.Map == null || m.Deleted)
                 return;
 
-            foreach (BaseHealer healer in BaseVendor.AllVendors.OfType<BaseHealer>().Where(h => !h.Deleted && h.Map == m.Map))
+            foreach (BaseHealer healer in BaseVendor.AllVendors.OfType<BaseHealer>())
             {
-                Create(m, healer, WaypointType.Resurrection);
+                if (!healer.Deleted && healer.Map == m.Map)
+                {
+                    Create(m, healer, WaypointType.Resurrection);
+                }
             }
         }
 
@@ -130,9 +139,12 @@ namespace Server
             if (ns == null)
                 return;
 
-            foreach (BaseHealer healer in BaseVendor.AllVendors.OfType<BaseHealer>().Where(h => !h.Deleted && h.Map == oldMap))
+            foreach (BaseHealer healer in BaseVendor.AllVendors.OfType<BaseHealer>())
             {
-                ns.Send(new RemoveWaypoint(healer.Serial));
+                if (!healer.Deleted && healer.Map == oldMap)
+                {
+                    ns.Send(new RemoveWaypoint(healer.Serial));
+                }
             }
         }
 
@@ -142,9 +154,12 @@ namespace Server
 
             if (p != null)
             {
-                foreach (Mobile mob in p.Members.Select(i => i.Mobile).Where(mobile => mobile != m && mobile.NetState != null && mobile.NetState.IsEnhancedClient))
+                foreach (Mobile mob in p.Members.Select(i => i.Mobile))
                 {
-                    Create(mob, m, WaypointType.PartyMember);
+                    if (mob != m && mob.NetState != null && mob.NetState.IsEnhancedClient)
+                    {
+                        Create(mob, m, WaypointType.PartyMember);
+                    }
                 }
             }
         }

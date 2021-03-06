@@ -7,7 +7,6 @@ namespace Server.Engines.Quests
     public class AllThatGlittersIsNotGoodQuest : BaseQuest
     {
         public AllThatGlittersIsNotGoodQuest()
-            : base()
         {
             AddObjective(new SlayObjective(typeof(ShimmeringEffusion), "shimmering effusion", 10));
 
@@ -29,23 +28,17 @@ namespace Server.Engines.Quests
         public override object Uncomplete => 1074656;
         /* I am overjoyed with your efforts!  Your devotion to Sosaria is noted and appreciated. */
         public override object Complete => 1074657;
-        public override bool CanOffer()
-        {
-            return MondainsLegacy.PrismOfLight;
-        }
-
+        
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 
@@ -64,10 +57,8 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests => new Type[]
-                {
-                    typeof(AllThatGlittersIsNotGoodQuest)
-                };
+        public override Type[] Quests => new[] { typeof(AllThatGlittersIsNotGoodQuest) };
+
         public override void InitBody()
         {
             InitStats(100, 100, 25);
@@ -91,15 +82,13 @@ namespace Server.Engines.Quests
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-
             writer.Write(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
-
-            int version = reader.ReadInt();
+            reader.ReadInt();
         }
     }
 }

@@ -55,9 +55,9 @@ namespace Server.Items
         {
             BaseHouse house = BaseHouse.FindHouseAt(this);
 
-            if (m is PlayerMobile && m.InRange(GetWorldLocation(), 2) /*&& (house == null || house.HasSecureAccess(m, this))*/)
+            if (m is PlayerMobile mobile && mobile.InRange(GetWorldLocation(), 2) /*&& (house == null || house.HasSecureAccess(m, this))*/)
             {
-                BaseGump.SendGump(new SpecialScrollBookGump((PlayerMobile)m, this));
+                BaseGump.SendGump(new SpecialScrollBookGump(mobile, this));
             }
             else if (m.AccessLevel > AccessLevel.Player)
             {
@@ -185,8 +185,13 @@ namespace Server.Items
             Timer.DelayCall(
                 () =>
                 {
-                    foreach (Item item in Items.Where(i => i.Movable))
-                        item.Movable = false;
+                    foreach (Item item in Items)
+                    {
+                        if (item.Movable)
+                        {
+                            item.Movable = false;
+                        }
+                    }
                 });
         }
 
