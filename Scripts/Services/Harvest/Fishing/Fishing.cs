@@ -447,7 +447,12 @@ namespace Server.Engines.Harvest
                         if (preLoot != null)
                         {
                             if (preLoot is IShipwreckedItem item)
+                            {
                                 item.IsShipwreckedItem = true;
+
+                                if (sos.IsAncient)
+                                    item.ShipwreckName = sos.ShipwreckName;
+                            }
 
                             return preLoot;
                         }
@@ -497,6 +502,9 @@ namespace Server.Engines.Harvest
                         chest.TrapLevel = 0;
 
                         chest.IsShipwreckedItem = true;
+
+                        if (sos.IsAncient)
+                            chest.ShipwreckName = sos.ShipwreckName;
 
                         sos.Delete();
 
@@ -587,7 +595,7 @@ namespace Server.Engines.Harvest
                 from.SendLocalizedMessage(1095064, null, 0x23);
             }
 
-            else if (item is WoodenChest || item is MetalGoldenChest)
+            else if (item is WoodenChest || item is MetalGoldenChest || item is SOSChest)
             {
                 from.SendLocalizedMessage(503175); // You pull up a heavy chest from the depths of the ocean!
             }
