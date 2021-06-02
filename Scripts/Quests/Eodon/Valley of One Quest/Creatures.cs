@@ -51,15 +51,14 @@ namespace Server.Mobiles
             SetSpecialAbility(SpecialAbility.TailSwipe);
         }
 
+        public override int Meat => 4;
+        public override MeatType MeatType => MeatType.DinoRibs;
         public override bool AutoDispel => true;
         public override Poison PoisonImmune => Poison.Lethal;
-        public override bool UseSmartAI => true;
         public override bool ReacquireOnMovement => true;
         public override bool AttacksFocus => true;
         public override bool CanFlee => false;
         public override int TreasureMapLevel => 5;
-
-        // Missing Tail Swipe Ability
 
         public override void OnThink()
         {
@@ -360,7 +359,6 @@ namespace Server.Mobiles
 
         public override bool AutoDispel => true;
         public override Poison PoisonImmune => Poison.Lethal;
-        public override bool UseSmartAI => true;
         public override int TreasureMapLevel => 5;
 
         public GreatApe(Serial serial)
@@ -612,10 +610,10 @@ namespace Server.Mobiles
 
             if (Protector is PlayerMobile mobile && InRange(Home, 2))
             {
-                PrideOfTheAmbushQuest quest = QuestHelper.GetQuest(mobile, typeof(PrideOfTheAmbushQuest)) as PrideOfTheAmbushQuest;
-
-                if (quest != null && !quest.Completed)
+                if (QuestHelper.GetQuest(mobile, typeof(PrideOfTheAmbushQuest)) is PrideOfTheAmbushQuest quest && !quest.Completed)
+                {
                     quest.Update(this);
+                }
 
                 mobile.PrivateOverheadMessage(Network.MessageType.Regular, 0x35, 1156501, mobile.NetState); // *You watch as the Tiger Cub safely returns to the Kurak Tribe*
 

@@ -196,7 +196,9 @@ namespace Server.Engines.CityLoyalty
                 new[] { typeof(PewterBowlOfPeas), typeof(WoodenBowlOfPeas) },
                 new[] { typeof(PewterBowlOfCarrots), typeof(WoodenBowlOfCarrots) },
                 new[] { typeof(PewterBowlOfCorn), typeof(WoodenBowlOfCorn) },
-                new[] { typeof(PewterBowlOfLettuce), typeof(WoodenBowlOfLettuce) }
+                new[] { typeof(PewterBowlOfLettuce), typeof(WoodenBowlOfLettuce) },
+                new[] { typeof(Necklace), typeof(GoldNecklace), typeof(GoldBeadNecklace) },
+                new[] { typeof(BrownBook), typeof(TanBook), typeof(BlueBook), typeof(RedBook), typeof(NewAquariumBook) }
             };
         }
 

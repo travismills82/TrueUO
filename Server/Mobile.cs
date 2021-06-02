@@ -25,13 +25,13 @@ namespace Server
 
 	public delegate void TargetStateCallback(Mobile from, object targeted, object state);
 
-	public delegate void TargetStateCallback<T>(Mobile from, object targeted, T state);
+	public delegate void TargetStateCallback<in T>(Mobile from, object targeted, T state);
 
 	public delegate void PromptCallback(Mobile from, string text);
 
 	public delegate void PromptStateCallback(Mobile from, string text, object state);
 
-	public delegate void PromptStateCallback<T>(Mobile from, string text, T state);
+	public delegate void PromptStateCallback<in T>(Mobile from, string text, T state);
 	#endregion
 
 	#region [...]Mods
@@ -1051,7 +1051,7 @@ namespace Server
 
         public virtual void OnAosSingleClick(Mobile from)
         {
-            ObjectPropertyList opl = PropertyList;
+            ObjectPropertyListPacket opl = PropertyList;
 
             if (opl.Header > 0)
             {
@@ -9313,15 +9313,15 @@ namespace Server
 			}
 		}
 
-		private ObjectPropertyList m_PropertyList;
+		private ObjectPropertyListPacket m_PropertyList;
 
-		public ObjectPropertyList PropertyList
+		public ObjectPropertyListPacket PropertyList
 		{
 			get
 			{
 				if (m_PropertyList == null)
 				{
-					m_PropertyList = new ObjectPropertyList(this);
+					m_PropertyList = new ObjectPropertyListPacket(this);
 
 					GetProperties(m_PropertyList);
 
@@ -9343,9 +9343,9 @@ namespace Server
 		{
 			if (m_Map != null && m_Map != Map.Internal && !World.Loading)
 			{
-				ObjectPropertyList oldList = m_PropertyList;
+                ObjectPropertyListPacket oldList = m_PropertyList;
 				Packet.Release(ref m_PropertyList);
-				ObjectPropertyList newList = PropertyList;
+                ObjectPropertyListPacket newList = PropertyList;
 
 				if (oldList == null || oldList.Hash != newList.Hash)
 				{
@@ -9859,9 +9859,7 @@ namespace Server
 		{
 			get
 			{
-				Item item = m_Weapon as Item;
-
-				if (item != null && !item.Deleted && item.Parent == this && CanSee(item))
+                if (m_Weapon is Item item && !item.Deleted && item.Parent == this && CanSee(item))
 				{
 					return m_Weapon;
 				}
@@ -11774,9 +11772,7 @@ namespace Server
 				Send(new StatLockInfo(this));
 			}
 
-			IParty ip = m_Party as IParty;
-
-			if (ip != null)
+            if (m_Party is IParty ip)
 			{
 				ip.OnStatsQuery(from, this);
 			}

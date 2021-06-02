@@ -227,7 +227,7 @@ namespace Server.SkillHandlers
             typeof(VirtuososNecklace), typeof(VirtuososTunic), typeof(BestialArms), typeof(BestialEarrings), typeof(BestialGloves), typeof(BestialGorget),
             typeof(BestialHelm), typeof(BestialKilt), typeof(BestialLegs), typeof(BestialNecklace), typeof(BarbedWhip), typeof(BladedWhip),
             typeof(SpikedWhip), typeof(SkullGnarledStaff), typeof(GargishSkullGnarledStaff), typeof(SkullLongsword), typeof(GargishSkullLongsword), typeof(JukaBow),
-            typeof(SlayerLongbow), typeof(JackOLanternHelm), typeof(BakeKitsuneHat)
+            typeof(SlayerLongbow), typeof(JackOLanternHelm), typeof(BakeKitsuneHat), typeof(MoonstoneBracelet), typeof(MoonstoneEarrings), typeof(MoonstoneRing)
         };
 
         private static readonly Type[] _NonCraftables =
@@ -287,15 +287,17 @@ namespace Server.SkillHandlers
 
         public static int GetQualityBonus(Item item)
         {
-            IQuality quality = item as IQuality;
-
-            if (quality != null)
+            if (item is IQuality quality)
             {
                 if (quality.Quality == ItemQuality.Exceptional)
+                {
                     return 20;
+                }
 
                 if (quality.PlayerConstructed)
+                {
                     return 10;
+                }
             }
 
             return 0;
@@ -849,10 +851,10 @@ namespace Server.SkillHandlers
         {
             int maxWeight = 450;
 
-            IQuality quality = item as IQuality;
-
-            if (quality != null && quality.Quality == ItemQuality.Exceptional)
+            if (item is IQuality quality && quality.Quality == ItemQuality.Exceptional)
+            {
                 maxWeight += 50;
+            }
 
             if (item is BaseWeapon itemToImbue)
             {

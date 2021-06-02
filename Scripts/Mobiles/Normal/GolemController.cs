@@ -55,15 +55,15 @@ namespace Server.Mobiles
         public override bool ClickTitle => false;
         public override bool ShowFameTitle => false;
         public override bool AlwaysMurderer => true;
+
         public override void GenerateLoot()
         {
-            AddLoot(LootPack.Rich);
-            AddLoot(LootPack.LootItem<ArcaneGem>(70.0));
-
             if (Map == Map.Ilshenar)
             {
-                AddLoot(LootPack.LootItem<CompassionSage>(0.02));
+                AddLoot(LootPack.LootItem<CompassionSage>(2.0));
             }
+            AddLoot(LootPack.Rich);
+            AddLoot(LootPack.LootItem<ArcaneGem>(70.0));
         }
 
         public void AddArcane(Item item)
@@ -73,8 +73,8 @@ namespace Server.Mobiles
                 eq.CurArcaneCharges = eq.MaxArcaneCharges = 20;
             }
 
-            item.Hue = ArcaneGem.DefaultArcaneHue;
-            item.LootType = LootType.Newbied;
+            item.Hue = 2117;
+            item.Movable = false;
 
             AddItem(item);
         }

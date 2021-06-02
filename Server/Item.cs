@@ -714,7 +714,7 @@ namespace Server
 		private Packet m_RemovePacket;
 
 		private Packet m_OPLPacket;
-		private ObjectPropertyList m_PropertyList;
+		private ObjectPropertyListPacket m_PropertyList;
 		#endregion
 
 		public int TempFlags
@@ -2176,13 +2176,13 @@ namespace Server
 			}
 		}
 
-		public ObjectPropertyList PropertyList
+		public ObjectPropertyListPacket PropertyList
 		{
 			get
 			{
 				if (m_PropertyList == null)
 				{
-					m_PropertyList = new ObjectPropertyList(this);
+					m_PropertyList = new ObjectPropertyListPacket(this);
 
 					GetProperties(m_PropertyList);
 					AppendChildProperties(m_PropertyList);
@@ -2229,9 +2229,9 @@ namespace Server
 		{
 			if (m_Map != null && m_Map != Map.Internal && !World.Loading)
 			{
-				ObjectPropertyList oldList = m_PropertyList;
+                ObjectPropertyListPacket oldList = m_PropertyList;
 				m_PropertyList = null;
-				ObjectPropertyList newList = PropertyList;
+                ObjectPropertyListPacket newList = PropertyList;
 
 				if (oldList == null || oldList.Hash != newList.Hash)
 				{
@@ -2415,7 +2415,7 @@ namespace Server
 
 					OnMapChange();
 
-					if (old == null || old == Map.Internal)
+                    if (old == null || old == Map.Internal)
 					{
 						InvalidateProperties();
 					}
@@ -3921,117 +3921,112 @@ namespace Server
 			{
 				bool sendOPLUpdate = (flags & ItemDelta.Properties) != 0;
 
-				Container contParent = m_Parent as Container;
-
-				if (contParent != null && !contParent.IsPublicContainer)
+                if (m_Parent is Container contParent && !contParent.IsPublicContainer && (flags & ItemDelta.Update) != 0)
 				{
-					if ((flags & ItemDelta.Update) != 0)
-					{
-						Point3D worldLoc = GetWorldLocation();
+                    Point3D worldLoc = GetWorldLocation();
 
-						Mobile rootParent = contParent.RootParent as Mobile;
-						Mobile tradeRecip = null;
+                    Mobile rootParent = contParent.RootParent as Mobile;
+                    Mobile tradeRecip = null;
 
-						if (rootParent != null)
-						{
-							NetState ns = rootParent.NetState;
+                    if (rootParent != null)
+                    {
+                        NetState ns = rootParent.NetState;
 
-							if (ns != null)
-							{
-								if (rootParent.CanSee(this) && rootParent.InRange(worldLoc, GetUpdateRange(rootParent)))
-								{
-									ns.Send(new ContainerContentUpdate(this));
+                        if (ns != null)
+                        {
+                            if (rootParent.CanSee(this) && rootParent.InRange(worldLoc, GetUpdateRange(rootParent)))
+                            {
+                                ns.Send(new ContainerContentUpdate(this));
 
-									ns.Send(OPLPacket);
-								}
-							}
-						}
+                                ns.Send(OPLPacket);
+                            }
+                        }
+                    }
 
-						SecureTradeContainer stc = GetSecureTradeCont();
+                    SecureTradeContainer stc = GetSecureTradeCont();
 
-						if (stc != null)
-						{
-							SecureTrade st = stc.Trade;
+                    if (stc != null)
+                    {
+                        SecureTrade st = stc.Trade;
 
-							if (st != null)
-							{
-								Mobile test = st.From.Mobile;
+                        if (st != null)
+                        {
+                            Mobile test = st.From.Mobile;
 
-								if (test != null && test != rootParent)
-								{
-									tradeRecip = test;
-								}
+                            if (test != null && test != rootParent)
+                            {
+                                tradeRecip = test;
+                            }
 
-								test = st.To.Mobile;
+                            test = st.To.Mobile;
 
-								if (test != null && test != rootParent)
-								{
-									tradeRecip = test;
-								}
+                            if (test != null && test != rootParent)
+                            {
+                                tradeRecip = test;
+                            }
 
-								if (tradeRecip != null)
-								{
-									NetState ns = tradeRecip.NetState;
+                            if (tradeRecip != null)
+                            {
+                                NetState ns = tradeRecip.NetState;
 
-									if (ns != null)
-									{
-										if (tradeRecip.CanSee(this) && tradeRecip.InRange(worldLoc, GetUpdateRange(tradeRecip)))
-										{
-											ns.Send(new ContainerContentUpdate(this));
+                                if (ns != null)
+                                {
+                                    if (tradeRecip.CanSee(this) && tradeRecip.InRange(worldLoc, GetUpdateRange(tradeRecip)))
+                                    {
+                                        ns.Send(new ContainerContentUpdate(this));
 
-											ns.Send(OPLPacket);
-										}
-									}
-								}
-							}
-						}
+                                        ns.Send(OPLPacket);
+                                    }
+                                }
+                            }
+                        }
+                    }
 
-						List<Mobile> openers = contParent.Openers;
+                    List<Mobile> openers = contParent.Openers;
 
-						if (openers != null)
-						{
-							lock (openers)
-							{
-								for (int i = 0; i < openers.Count; ++i)
-								{
-									Mobile mob = openers[i];
+                    if (openers != null)
+                    {
+                        lock (openers)
+                        {
+                            for (int i = 0; i < openers.Count; ++i)
+                            {
+                                Mobile mob = openers[i];
 
-									int range = GetUpdateRange(mob);
+                                int range = GetUpdateRange(mob);
 
-									if (mob.Map != map || !mob.InRange(worldLoc, range))
-									{
-										openers.RemoveAt(i--);
-									}
-									else
-									{
-										if (mob == rootParent || mob == tradeRecip)
-										{
-											continue;
-										}
+                                if (mob.Map != map || !mob.InRange(worldLoc, range))
+                                {
+                                    openers.RemoveAt(i--);
+                                }
+                                else
+                                {
+                                    if (mob == rootParent || mob == tradeRecip)
+                                    {
+                                        continue;
+                                    }
 
-										NetState ns = mob.NetState;
+                                    NetState ns = mob.NetState;
 
-										if (ns != null && ns.Seeded)
-										{
-											if (mob.CanSee(this))
-											{
-												ns.Send(new ContainerContentUpdate(this));
+                                    if (ns != null && ns.Seeded)
+                                    {
+                                        if (mob.CanSee(this))
+                                        {
+                                            ns.Send(new ContainerContentUpdate(this));
 
-												ns.Send(OPLPacket);
-											}
-										}
-									}
-								}
+                                            ns.Send(OPLPacket);
+                                        }
+                                    }
+                                }
+                            }
 
-								if (openers.Count == 0)
-								{
-									contParent.Openers = null;
-								}
-							}
-						}
-						return;
-					}
-				}
+                            if (openers.Count == 0)
+                            {
+                                contParent.Openers = null;
+                            }
+                        }
+                    }
+                    return;
+                }
 
 				if ((flags & ItemDelta.Update) != 0)
 				{
@@ -4737,9 +4732,7 @@ namespace Server
 					oldParent = item.RootParent;
 				}
 
-				Mobile root = RootParent as Mobile;
-
-				if (root != null && oldParent != root)
+                if (RootParent is Mobile root && oldParent != root)
 				{
 					root.Obtained(this);
 				}
@@ -5662,7 +5655,7 @@ namespace Server
 
 		public virtual void OnAosSingleClick(Mobile from)
 		{
-			ObjectPropertyList opl = PropertyList;
+            ObjectPropertyListPacket opl = PropertyList;
 
 			if (opl.Header > 0)
 			{
@@ -6148,7 +6141,7 @@ namespace Server
 		{
 		}
 
-		public virtual void GetProperties(ObjectPropertyList list)
+        public virtual void GetProperties(ObjectPropertyList list)
 		{
 		}
 

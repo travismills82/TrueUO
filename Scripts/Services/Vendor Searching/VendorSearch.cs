@@ -730,7 +730,7 @@ namespace Server.Engines.VendorSearching
                 return item.Name;
             }
 
-            ObjectPropertyList opl = new ObjectPropertyList(item);
+            ObjectPropertyListPacket opl = new ObjectPropertyListPacket(item);
             item.GetProperties(opl);
 
             //since the object property list is based on a packet object, the property info is packed away in a packet format
@@ -1097,7 +1097,7 @@ namespace Server.Engines.VendorSearching
                 {
                     var det = Details[index];
 
-                    if (det.Attribute is Layer attribute && attribute != (Layer) o)
+                    if (det.Attribute is Layer attribute && attribute != layerObject)
                     {
                         layer = det;
                         break;

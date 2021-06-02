@@ -5,7 +5,7 @@ namespace Server.Engines.Quests
 {
     public static class GenerateTheBlackGate
     {
-        public static readonly string EntityName = "theblackgate";
+        private const string EntityName = "theblackgate";
 
         public static void Initialize()
         {
@@ -13,6 +13,8 @@ namespace Server.Engines.Quests
             CommandSystem.Register("DelBlackGate", AccessLevel.Administrator, Delete);
         }
 
+        [Usage("GenBlackGate")]
+        [Description("Generates The Black Gate Quest.")]
         public static void Generate(CommandEventArgs e)
         {
             Mobile m = e.Mobile;
@@ -74,6 +76,8 @@ namespace Server.Engines.Quests
             WeakEntityCollection.Add(EntityName, decor);
         }
 
+        [Usage("DelBlackGate")]
+        [Description("Deletes The Black Gate Quest.")]
         public static void Delete(CommandEventArgs e)
         {
             WeakEntityCollection.Delete(EntityName);

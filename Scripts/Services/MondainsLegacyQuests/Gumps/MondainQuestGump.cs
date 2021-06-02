@@ -133,12 +133,15 @@ namespace Server.Engines.Quests
                         SecDescription();
                         SecObjectives();
                         SecRewards();
-                        break;
+                        break;                    
                     case Section.Refuse:
                         SecRefuse();
                         break;
                     case Section.Complete:
                         SecComplete();
+                        break;
+                    case Section.Rewards:
+                        SecCompleteRewards();
                         break;
                     case Section.InProgress:
                         SecInProgress();
@@ -317,10 +320,12 @@ namespace Server.Engines.Quests
             }
 
             AddImage(425, 0, 0x28C9);
-            AddImage(90, 33, 0x232D);            
-
+            AddImage(90, 33, 0x232D);
+            
             if (isconversation)
                 AddHtmlLocalized(130, 45, 270, 16, 3006156, 0xFFFFFF, false, false); // Quest Conversation
+            else if (m_Completed)
+                AddHtmlLocalized(130, 45, 270, 16, 1072201, 0xFFFFFF, false, false); // Reward
             else if (m_Offer)
                 AddHtmlLocalized(130, 45, 270, 16, 1049010, 0xFFFFFF, false, false); // Quest Offer
             else
@@ -653,16 +658,7 @@ namespace Server.Engines.Quests
                 }
             }
 
-            if (m_Completed)
-            {
-                AddButton(95, 455, 0x2EE0, 0x2EE2, (int)Buttons.AcceptReward, GumpButtonType.Reply, 0);
-
-                if (m_Quest.CanRefuseReward)
-                    AddButton(313, 430, 0x2EF2, 0x2EF4, (int)Buttons.RefuseReward, GumpButtonType.Reply, 0);
-                else
-                    AddButton(313, 455, 0x2EE6, 0x2EE8, (int)Buttons.Close, GumpButtonType.Reply, 0);
-            }
-            else if (m_Offer)
+            if (m_Offer)
             {
                 AddButton(95, 455, 0x2EE0, 0x2EE2, (int)Buttons.AcceptQuest, GumpButtonType.Reply, 0);
                 AddButton(313, 455, 0x2EF2, 0x2EF4, (int)Buttons.RefuseQuest, GumpButtonType.Reply, 0);
@@ -754,6 +750,45 @@ namespace Server.Engines.Quests
 
             AddButton(313, 455, 0x2EE6, 0x2EE8, (int)Buttons.Close, GumpButtonType.Reply, 0);
             AddButton(95, 455, 0x2EE9, 0x2EEB, (int)Buttons.Complete, GumpButtonType.Reply, 0);
+        }
+
+        public void SecCompleteRewards()
+        {
+            if (m_Quest == null)
+                return;
+
+            SecBackground();
+            SecHeader();            
+
+            int offset = 140;
+
+            for (int i = 0; i < m_Quest.Rewards.Count; i++)
+            {
+                BaseReward reward = m_Quest.Rewards[i];
+
+                if (reward != null)
+                {
+                    AddImage(107, offset + 7, 0x4B9);
+                    AddHtmlObject(135, offset + 6, 280, m_Quest.Rewards.Count == 1 ? 100 : 16, reward.Name, 0x15F90, false, false);
+
+                    if (reward.Image > 0)
+                    {
+                        AddItem(285, offset, reward.Image);
+                    }
+
+                    offset += 16;
+                }
+            }
+
+            if (m_Completed)
+            {
+                AddButton(95, 455, 0x2EE0, 0x2EE2, (int)Buttons.AcceptReward, GumpButtonType.Reply, 0);
+
+                if (m_Quest.CanRefuseReward)
+                    AddButton(313, 430, 0x2EF2, 0x2EF4, (int)Buttons.RefuseReward, GumpButtonType.Reply, 0);
+                else
+                    AddButton(313, 455, 0x2EE6, 0x2EE8, (int)Buttons.Close, GumpButtonType.Reply, 0);
+            }
         }
 
         public string FormatSeconds(int seconds)

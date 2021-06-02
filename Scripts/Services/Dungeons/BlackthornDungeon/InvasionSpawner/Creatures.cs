@@ -44,9 +44,7 @@ namespace Server.Engines.Blackthorn
 
         public override WeaponAbility GetWeaponAbility()
         {
-            BaseWeapon wep = Weapon as BaseWeapon;
-
-            if (wep != null)
+            if (Weapon is BaseWeapon wep)
             {
                 return 0.6 > Utility.RandomDouble() ? wep.PrimaryAbility : wep.SecondaryAbility;
             }
@@ -54,7 +52,6 @@ namespace Server.Engines.Blackthorn
             return null;
         }
 
-        public override bool UseSmartAI => true;
         public virtual bool CanDoSpecial => SpellCaster;
 
         public virtual double MinSkill => 100.0;

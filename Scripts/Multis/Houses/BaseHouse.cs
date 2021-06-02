@@ -1238,10 +1238,10 @@ namespace Server.Multis
 
             for (int i = 0; i < sector.Multis.Count; ++i)
             {
-                BaseHouse house = sector.Multis[i] as BaseHouse;
-
-                if (house != null && house.IsInside(loc, height))
+                if (sector.Multis[i] is BaseHouse house && house.IsInside(loc, height))
+                {
                     return house;
+                }
             }
 
             return null;
@@ -3469,7 +3469,7 @@ namespace Server.Multis
 
                 if (info.Item != null)
                 {
-                    info.Item.IsSecure = info.IsLockdown ? false : true;
+                    info.Item.IsSecure = !info.IsLockdown;
                     Secures.Add(info);
                 }
             }
@@ -4238,12 +4238,14 @@ namespace Server.Multis
                 Mobile c = Bans[i];
 
                 if (c == m)
+                {
                     return true;
+                }
 
-                Account bannedAccount = c.Account as Account;
-
-                if (bannedAccount != null && bannedAccount == theirAccount)
+                if (c.Account is Account bannedAccount && bannedAccount == theirAccount)
+                {
                     return true;
+                }
             }
 
             return false;

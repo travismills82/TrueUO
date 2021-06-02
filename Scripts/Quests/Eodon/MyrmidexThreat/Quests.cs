@@ -1,6 +1,5 @@
 using Server.Engines.MyrmidexInvasion;
 using Server.Engines.ResortAndCasino;
-using Server.Gumps;
 using Server.Items;
 using Server.Mobiles;
 using System;
@@ -560,7 +559,7 @@ namespace Server.Engines.Quests
 
                         if (CurProgress <= MaxProgress)
                         {
-                            Quest.Owner.SendLocalizedMessage(1156795, $"{CurProgress.ToString()}\t{MaxProgress.ToString()}\t{"Chuckles' Luck"}"); // [Quest Event: Getting Even] You have won ~1_count~ of ~2_req~ games of ~3_game~!
+                            Quest.Owner.SendLocalizedMessage(1156795, $"{CurProgress}\t{MaxProgress}\tChuckles' Luck"); // [Quest Event: Getting Even] You have won ~1_count~ of ~2_req~ games of ~3_game~!
                         }
                     }
                     else if (t == typeof(HiMiddleLow))
@@ -570,7 +569,7 @@ namespace Server.Engines.Quests
 
                         if (CurProgress <= MaxProgress)
                         {
-                            Quest.Owner.SendLocalizedMessage(1156795, $"{CurProgress.ToString()}\t{MaxProgress.ToString()}\t{"Hi-Middle-Low"}"); // [Quest Event: Getting Even] You have won ~1_count~ of ~2_req~ games of ~3_game~!
+                            Quest.Owner.SendLocalizedMessage(1156795, $"{CurProgress}\t{MaxProgress}\tHi-Middle-Low"); // [Quest Event: Getting Even] You have won ~1_count~ of ~2_req~ games of ~3_game~!
                         }
                     }
                     else if (t == typeof(DiceRider))
@@ -580,7 +579,7 @@ namespace Server.Engines.Quests
 
                         if (CurProgress <= MaxProgress)
                         {
-                            Quest.Owner.SendLocalizedMessage(1156795, $"{CurProgress.ToString()}\t{MaxProgress.ToString()}\t{"Dice Rider"}"); // [Quest Event: Getting Even] You have won ~1_count~ of ~2_req~ games of ~3_game~!
+                            Quest.Owner.SendLocalizedMessage(1156795, $"{CurProgress}\t{MaxProgress}\tDice Rider"); // [Quest Event: Getting Even] You have won ~1_count~ of ~2_req~ games of ~3_game~!
                         }
                     }
 
